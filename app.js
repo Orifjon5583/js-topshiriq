@@ -480,9 +480,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Mavzu (Theme) - Tungi va Kunduzgi rejim
+  const currentTheme = localStorage.getItem("js_theme") || "light";
+  const themeLightBtn = document.getElementById("themeLightBtn");
+  const themeDarkBtn = document.getElementById("themeDarkBtn");
+  const btnCloseSettingsBtn = document.getElementById("btnCloseSettingsBtn");
+
+  function setTheme(theme) {
+    if (theme === "dark") {
+      document.body.classList.add("dark");
+      if (themeDarkBtn) themeDarkBtn.classList.add("active");
+      if (themeLightBtn) themeLightBtn.classList.remove("active");
+    } else {
+      document.body.classList.remove("dark");
+      if (themeLightBtn) themeLightBtn.classList.add("active");
+      if (themeDarkBtn) themeDarkBtn.classList.remove("active");
+    }
+    localStorage.setItem("js_theme", theme);
+  }
+
+  // Dastlabki rejimni yuklash
+  setTheme(currentTheme);
+
+  if (themeLightBtn) {
+    themeLightBtn.addEventListener("click", () => {
+      setTheme("light");
+      showToast("Kunduzgi rejim yoqildi ☀️");
+    });
+  }
+
+  if (themeDarkBtn) {
+    themeDarkBtn.addEventListener("click", () => {
+      setTheme("dark");
+      showToast("Tungi rejim yoqildi 🌙");
+    });
+  }
+
   // Sozlamalar modali
   btnSettings.addEventListener("click", () => {
-    webhookUrlInput.value = state.webhookUrl;
     settingsModal.classList.add("open");
   });
 
@@ -490,17 +525,15 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsModal.classList.remove("open");
   });
 
+  if (btnCloseSettingsBtn) {
+    btnCloseSettingsBtn.addEventListener("click", () => {
+      settingsModal.classList.remove("open");
+    });
+  }
+
   settingsModal.addEventListener("click", (e) => {
     if (e.target === settingsModal) {
       settingsModal.classList.remove("open");
     }
-  });
-
-  btnSaveSettings.addEventListener("click", () => {
-    const url = webhookUrlInput.value.trim();
-    state.webhookUrl = url;
-    localStorage.setItem("js_webhook_url", url);
-    settingsModal.classList.remove("open");
-    showToast("Google Sheets havolasi saqlandi!");
   });
 });
