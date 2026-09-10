@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Topshiriqlari — for & forEach</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Background Blobs -->
+  <div class="bg-blobs">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo-wrap">
+        <div class="logo-icon">
+          <i class="fa-brands fa-js"></i>
+        </div>
+        <div class="logo-text">
+          <h1>JS Practicum</h1>
+          <p>Mavzu: Loop — for, forEach</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div id="headerUserInfo" class="user-badge" style="display: none;">
+          <div class="avatar"><i class="fa-solid fa-user"></i></div>
+          <span id="headerUserName">O'quvchi</span>
+        </div>
+
+        <button id="btnSettings" class="btn-icon" title="Google Sheets sozlamasi">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- 1. Start Screen: O'quvchi ma'lumotlari -->
+    <section id="startScreen" class="screen active">
+      <div class="start-card">
+        <span class="start-badge">JavaScript Amaliyot</span>
+        <h2>Topshiriqlarni Boshlash</h2>
+        <p>Topshiriqlarni ketma-ket yeching. Har bir topshiriq yechimi avtomatik tarzda Google Sheets jadvaliga yuboriladi.</p>
+
+        <form id="studentForm">
+          <div class="form-group">
+            <label for="studentNameInput">Ism va Familiyangiz <span style="color:red">*</span></label>
+            <input type="text" id="studentNameInput" placeholder="Masalan: Sardor Aliyev" required autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="studentGroupInput">Guruhingiz yoki Telefon raqam <span style="color:red">*</span></label>
+            <input type="text" id="studentGroupInput" placeholder="Masalan: Frontend-24 yoki +998 90 123 45 67" required>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <span>Boshlash (1-topshiriqqa o'tish)</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. Tasks Stepper Screen -->
+    <section id="taskScreen" class="screen">
+      <!-- Progress Bar & Stepper -->
+      <div class="stepper-container">
+        <div class="stepper-header">
+          <div class="stepper-title">
+            <i class="fa-solid fa-list-check" style="color: var(--primary);"></i>
+            <span>Topshiriqlar ketma-ketligi</span>
+          </div>
+          <div class="stepper-count" id="stepCounterText">Topshiriq 1 / 12</div>
+        </div>
+
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+
+        <div class="step-dots" id="stepDotsContainer">
+          <!-- Dinamik 1..12 tugmalari -->
+        </div>
+      </div>
+
+      <!-- Main Workspace Grid -->
+      <div class="workspace-grid">
+        <!-- Chap tomon: Topshiriq Sharti -->
+        <div class="task-card">
+          <div class="task-header-badges">
+            <span class="badge-step" id="taskBadge">1-topshiriq</span>
+            <span class="badge-category" id="taskCategory">for loop</span>
+          </div>
+
+          <h2 class="task-title" id="taskTitle">Topshiriq sarlavhasi</h2>
+
+          <div class="task-desc-box">
+            <p id="taskDescription">Topshiriq sharti bu yerda ko'rinadi...</p>
+          </div>
+
+          <div class="hint-accordion">
+            <div class="hint-header">
+              <i class="fa-regular fa-lightbulb"></i>
+              <span>Maslahat (Hint)</span>
+            </div>
+            <div class="hint-content" id="taskHint">...</div>
+          </div>
+
+          <div class="expected-box">
+            <div class="expected-title">
+              <i class="fa-solid fa-terminal"></i> Kutilayotgan Natija (Konsolda)
+            </div>
+            <div class="expected-code" id="taskExpected">...</div>
+          </div>
+        </div>
+
+        <!-- O'ng tomon: Kod yozish va Fayl yuklash -->
+        <div class="submission-card">
+          <div class="submission-tabs">
+            <div class="tabs-group">
+              <button class="tab-btn active" id="tabCodeBtn" data-tab="code">
+                <i class="fa-solid fa-code"></i> Kod yozish
+              </button>
+              <button class="tab-btn" id="tabFileBtn" data-tab="file">
+                <i class="fa-solid fa-file-arrow-up"></i> .js fayl yuklash
+              </button>
+            </div>
+            <span style="font-size: 12px; color: var(--text-muted);">JavaScript</span>
+          </div>
+
+          <!-- Tab 1: Kod muharriri -->
+          <div class="tab-content active" id="tabCode">
+            <div class="editor-container">
+              <div class="editor-header">
+                <span><i class="fa-brands fa-js" style="color: #f7df1e;"></i> solution.js</span>
+                <span id="charCount">0 ta belgi</span>
+              </div>
+              <textarea id="codeEditor" class="editor-textarea" spellcheck="false" placeholder="// JavaScript kodingizni bu yerga yozing..."></textarea>
+            </div>
+          </div>
+
+          <!-- Tab 2: Fayl yuklash -->
+          <div class="tab-content" id="tabFile">
+            <div class="dropzone" id="dropZone">
+              <input type="file" id="fileInput" accept=".js" style="display: none;">
+              <div class="dropzone-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h4>.js faylingizni bu yerga tashlang</h4>
+              <p>yoki faylni tanlash uchun bosing (.js formatida)</p>
+
+              <div id="fileInfoBar" class="file-info-bar" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-file-code"></i>
+                  <span class="file-name-text" id="uploadedFileName">fayl.js</span>
+                </div>
+                <button type="button" id="btnRemoveFile" style="background:none; border:none; color: #dc2626; cursor:pointer;" title="O'chirish">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sinov konsoli (Run / Test natijasi) -->
+          <div class="console-box">
+            <div class="console-header">
+              <span><i class="fa-solid fa-play" style="color:#10b981; font-size: 10px;"></i> Brauzer konsol chiqishi:</span>
+              <button id="btnClearConsole" style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:11px;">Tozalash</button>
+            </div>
+            <div class="console-output" id="consoleOutput">// Kodni sinab ko'rish uchun quyidagi "Kodni ishlatish" tugmasini bosing...</div>
+          </div>
+
+          <!-- Action Footer -->
+          <div class="submission-footer">
+            <button type="button" class="btn-test" id="btnRunCode" title="Kodingiz qanday ishlashini konsolda sinab ko'ring">
+              <i class="fa-solid fa-play"></i> Kodni ishlatish (Test)
+            </button>
+
+            <button type="button" class="btn-submit" id="btnSubmitTask">
+              <span id="submitBtnText">Topshirish va Keyingisi</span>
+              <i class="fa-solid fa-arrow-right" id="submitBtnIcon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Completion Screen (Tabrik va xulosa) -->
+    <section id="completeScreen" class="screen">
+      <div class="congrats-card">
+        <div class="congrats-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2>Tabriklaymiz! Barcha topshiriqlar topshirildi!</h2>
+        <p>Barcha 12 ta topshiriq kodi muvaffaqiyatli qabul qilindi va Google Sheets jadvaliga yuklandi.</p>
+
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Topshiriq</th>
+              <th>Mavzu</th>
+              <th>Holati</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody">
+            <!-- Dinamik natijalar -->
+          </tbody>
+        </table>
+
+        <button type="button" class="btn-primary" id="btnRestart" style="max-width: 280px; margin: 0 auto;">
+          <i class="fa-solid fa-rotate-left"></i> Boshidan qayta topshirish
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sozlamalar modali (Google Sheets Webhook URL) -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Google Sheets Integratsiyasi</h3>
+        <button class="btn-close" id="btnCloseSettings">&times;</button>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 16px;">
+        Google Apps Script orqali olingan Web App havolasini kiriting. O'quvchi topshirgan har bir yechim ushbu manzil orqali avtomatik Google Sheets jadvalingizga tushadi.
+      </p>
+
+      <div class="form-group">
+        <label for="webhookUrlInput">Google Apps Script Web App URL:</label>
+        <input type="url" id="webhookUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 12.5px; color: #475569;">
+        <strong>Eslatma:</strong> Agar havolani kiritmasangiz, topshiriqlar lokal xotirada (localStorage) saqlanib turadi va xatoliksiz ishlaydi.
+      </div>
+
+      <button type="button" class="btn-primary" id="btnSaveSettings">
+        <i class="fa-solid fa-floppy-disk"></i> Saqlash
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast xabarnomasi -->
+  <div id="toast" class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMsg">Xabar</span>
+  </div>
+
+  <script src="tasks.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
