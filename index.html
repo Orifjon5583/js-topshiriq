@@ -122,51 +122,18 @@
           </div>
         </div>
 
-        <!-- O'ng tomon: Kod yozish va Fayl yuklash -->
+        <!-- O'ng tomon: Faqat Kod yozish maydoni -->
         <div class="submission-card">
-          <div class="submission-tabs">
-            <div class="tabs-group">
-              <button class="tab-btn active" id="tabCodeBtn" data-tab="code">
-                <i class="fa-solid fa-code"></i> Kod yozish
-              </button>
-              <button class="tab-btn" id="tabFileBtn" data-tab="file">
-                <i class="fa-solid fa-file-arrow-up"></i> .js fayl yuklash
-              </button>
+          <div class="editor-header-bar">
+            <div class="editor-title-wrap">
+              <i class="fa-brands fa-js" style="color: #f7df1e; font-size: 16px;"></i>
+              <span>JavaScript Kod Muharriri</span>
             </div>
-            <span style="font-size: 12px; color: var(--text-muted);">JavaScript</span>
+            <span id="charCount" class="editor-char-badge">0 ta belgi</span>
           </div>
 
-          <!-- Tab 1: Kod muharriri -->
-          <div class="tab-content active" id="tabCode">
-            <div class="editor-container">
-              <div class="editor-header">
-                <span><i class="fa-brands fa-js" style="color: #f7df1e;"></i> solution.js</span>
-                <span id="charCount">0 ta belgi</span>
-              </div>
-              <textarea id="codeEditor" class="editor-textarea" spellcheck="false" placeholder="// JavaScript kodingizni bu yerga yozing..."></textarea>
-            </div>
-          </div>
-
-          <!-- Tab 2: Fayl yuklash -->
-          <div class="tab-content" id="tabFile">
-            <div class="dropzone" id="dropZone">
-              <input type="file" id="fileInput" accept=".js" style="display: none;">
-              <div class="dropzone-icon">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-              </div>
-              <h4>.js faylingizni bu yerga tashlang</h4>
-              <p>yoki faylni tanlash uchun bosing (.js formatida)</p>
-
-              <div id="fileInfoBar" class="file-info-bar" style="display: none;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <i class="fa-solid fa-file-code"></i>
-                  <span class="file-name-text" id="uploadedFileName">fayl.js</span>
-                </div>
-                <button type="button" id="btnRemoveFile" style="background:none; border:none; color: #dc2626; cursor:pointer;" title="O'chirish">
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-              </div>
-            </div>
+          <div class="editor-body">
+            <textarea id="codeEditor" class="editor-textarea" spellcheck="false" placeholder="// JavaScript kodingizni bu yerga yozing..."></textarea>
           </div>
 
           <!-- Sinov konsoli (Run / Test natijasi) -->

@@ -36,19 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const taskHint = document.getElementById("taskHint");
   const taskExpected = document.getElementById("taskExpected");
 
-  // Kod muharriri va yuklash
+  // Kod muharriri
   const codeEditor = document.getElementById("codeEditor");
   const charCount = document.getElementById("charCount");
-  const dropZone = document.getElementById("dropZone");
-  const fileInput = document.getElementById("fileInput");
-  const fileInfoBar = document.getElementById("fileInfoBar");
-  const uploadedFileName = document.getElementById("uploadedFileName");
-  const btnRemoveFile = document.getElementById("btnRemoveFile");
-
-  const tabCodeBtn = document.getElementById("tabCodeBtn");
-  const tabFileBtn = document.getElementById("tabFileBtn");
-  const tabCode = document.getElementById("tabCode");
-  const tabFile = document.getElementById("tabFile");
 
   // Konsol va harakatlar
   const consoleOutput = document.getElementById("consoleOutput");
@@ -200,14 +190,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedSolution = state.solutions[task.id];
     if (savedSolution) {
       codeEditor.value = savedSolution.code;
-      if (savedSolution.fileName && savedSolution.fileName !== "editor_kod.js") {
-        showFileBar(savedSolution.fileName);
-      } else {
-        hideFileBar();
-      }
     } else {
       codeEditor.value = task.starterCode || "";
-      hideFileBar();
     }
 
     updateCharCount();
@@ -239,88 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
       codeEditor.value = codeEditor.value.substring(0, start) + "  " + codeEditor.value.substring(end);
       codeEditor.selectionStart = codeEditor.selectionEnd = start + 2;
     }
-  });
-
-  // Tablarni almashtirish
-  tabCodeBtn.addEventListener("click", () => {
-    tabCodeBtn.classList.add("active");
-    tabFileBtn.classList.remove("active");
-    tabCode.classList.add("active");
-    tabFile.classList.remove("active");
-  });
-
-  tabFileBtn.addEventListener("click", () => {
-    tabFileBtn.classList.add("active");
-    tabCodeBtn.classList.remove("active");
-    tabFile.classList.add("active");
-    tabCode.classList.remove("active");
-  });
-
-  // Fayl yuklash (Drag & Drop va Input)
-  dropZone.addEventListener("click", (e) => {
-    if (e.target.closest("#btnRemoveFile")) return;
-    fileInput.click();
-  });
-
-  dropZone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    dropZone.classList.add("dragover");
-  });
-
-  dropZone.addEventListener("dragleave", () => {
-    dropZone.classList.remove("dragover");
-  });
-
-  dropZone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    dropZone.classList.remove("dragover");
-    if (e.dataTransfer.files.length > 0) {
-      handleFile(e.dataTransfer.files[0]);
-    }
-  });
-
-  fileInput.addEventListener("change", (e) => {
-    if (e.target.files.length > 0) {
-      handleFile(e.target.files[0]);
-    }
-  });
-
-  function handleFile(file) {
-    if (!file.name.endsWith(".js") && file.type !== "text/javascript") {
-      showToast("Faqat .js kengaytmali fayllarni yuklash mumkin!", "error");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target.result;
-      codeEditor.value = content;
-      updateCharCount();
-      state.currentFileName = file.name;
-      showFileBar(file.name);
-      showToast(`"${file.name}" kodi yuklandi!`);
-
-      // Avtomatik kod oynasiga o'tkazish
-      tabCodeBtn.click();
-    };
-    reader.readAsText(file);
-  }
-
-  function showFileBar(name) {
-    uploadedFileName.textContent = name;
-    fileInfoBar.style.display = "flex";
-  }
-
-  function hideFileBar() {
-    state.currentFileName = "";
-    fileInfoBar.style.display = "none";
-    fileInput.value = "";
-  }
-
-  btnRemoveFile.addEventListener("click", (e) => {
-    e.stopPropagation();
-    hideFileBar();
-    showToast("Yuklangan fayl olib tashlandi.");
   });
 
   // Kodni ishlatish (Test Console)
