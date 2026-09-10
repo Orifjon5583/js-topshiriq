@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const state = {
     studentName: localStorage.getItem("js_student_name") || "",
     studentGroup: localStorage.getItem("js_student_group") || "",
-    webhookUrl: localStorage.getItem("js_webhook_url") || "",
+    webhookUrl: localStorage.getItem("js_webhook_url") || "https://script.google.com/macros/s/AKfycbyVw09Dv6gNX8Uyy_ykDhtTbZrg2YxNogcHj5rMJf8OV5R1LD6oLgY96bfIWOIVrXzF/exec",
     currentIndex: 0,
     currentFileName: "",
     solutions: JSON.parse(localStorage.getItem("js_solutions") || "{}")
