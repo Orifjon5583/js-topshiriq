@@ -29,12 +29,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const progressBarFill = document.getElementById("progressBarFill");
 
   // Task ma'lumotlari
+  const taskPartBadge = document.getElementById("taskPartBadge");
   const taskBadge = document.getElementById("taskBadge");
   const taskCategory = document.getElementById("taskCategory");
   const taskTitle = document.getElementById("taskTitle");
   const taskDescription = document.getElementById("taskDescription");
   const taskHint = document.getElementById("taskHint");
   const taskExpected = document.getElementById("taskExpected");
+
+  // Qismlar (Part tabs)
+  const partTab1 = document.getElementById("partTab1");
+  const partTab2 = document.getElementById("partTab2");
+  const stepperTitleText = document.getElementById("stepperTitleText");
+
+  // Holatda joriy qism
+  state.currentPart = 1;
 
   // Kod muharriri
   const codeEditor = document.getElementById("codeEditor");
@@ -131,28 +140,60 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`Xush kelibsiz, ${name}! Topshiriqlarni boshlaymiz.`);
   });
 
+  // Qismlar tablari bosilganda
+  if (partTab1) {
+    partTab1.addEventListener("click", () => {
+      switchToPart(1);
+    });
+  }
+  if (partTab2) {
+    partTab2.addEventListener("click", () => {
+      switchToPart(2);
+    });
+  }
+
+  function switchToPart(partNum) {
+    state.currentPart = partNum;
+    partTab1.classList.toggle("active", partNum === 1);
+    partTab2.classList.toggle("active", partNum === 2);
+
+    // Shu qismdagi birinchi topshirilmagan (yoki birinchi) topshiriqni topish
+    const partTasks = TASKS_DATA.filter(t => t.part === partNum);
+    let targetTask = partTasks.find(t => !state.solutions[t.id]) || partTasks[0];
+    const targetIndex = TASKS_DATA.findIndex(t => t.id === targetTask.id);
+
+    initStepper(partNum);
+    loadTask(targetIndex);
+    showToast(`${partNum}-Qism topshiriqlari ochildi!`);
+  }
+
   // Stepper tugmalarini hosil qilish
-  function initStepper() {
+  function initStepper(partNum = state.currentPart || 1) {
     stepDotsContainer.innerHTML = "";
-    TASKS_DATA.forEach((task, idx) => {
+    stepperTitleText.textContent = `${partNum}-Qism topshiriqlar ketma-ketligi`;
+
+    const partTasks = TASKS_DATA.filter(t => t.part === partNum);
+
+    partTasks.forEach((task, pIdx) => {
+      const globalIdx = TASKS_DATA.findIndex(t => t.id === task.id);
       const dot = document.createElement("button");
       dot.className = "step-dot";
-      dot.textContent = idx + 1;
-      dot.title = `${task.badge}: ${task.title}`;
+      dot.textContent = pIdx + 1; // 1-qismda 1..12, 2-qismda 1..10
+      dot.title = `[${task.partBadge}] ${task.badge}: ${task.title}`;
 
       if (state.solutions[task.id]) {
         dot.classList.add("completed");
       }
-      if (idx === state.currentIndex) {
+      if (globalIdx === state.currentIndex) {
         dot.classList.add("active");
       }
 
       dot.addEventListener("click", () => {
-        // Faqat oldingi yechilgan yoki navbatdagi topshiriqqa o'tishga ruxsat
-        if (idx <= state.currentIndex || state.solutions[task.id]) {
-          loadTask(idx);
+        // Oldingi yechilgan yoki navbatdagi topshiriqqa o'tish
+        if (globalIdx <= state.currentIndex || state.solutions[task.id]) {
+          loadTask(globalIdx);
         } else {
-          showToast(`Oldin ${state.currentIndex + 1}-topshiriqni topshiring!`, "error");
+          showToast(`Oldin ${TASKS_DATA[state.currentIndex]?.badge || 'navbatdagi'}ni topshiring!`, "error");
         }
       });
 
@@ -164,21 +205,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadTask(index) {
     state.currentIndex = index;
     const task = TASKS_DATA[index];
+    state.currentPart = task.part;
+
+    // Qism tablarini yangilash
+    if (partTab1 && partTab2) {
+      partTab1.classList.toggle("active", task.part === 1);
+      partTab2.classList.toggle("active", task.part === 2);
+    }
 
     // Stepper holatini yangilash
-    stepCounterText.textContent = `Topshiriq ${index + 1} / ${TASKS_DATA.length}`;
+    initStepper(task.part);
+    stepCounterText.textContent = `Topshiriq ${task.id} / ${TASKS_DATA.length}`;
     const progressPercent = ((index + 1) / TASKS_DATA.length) * 100;
     progressBarFill.style.width = `${progressPercent}%`;
 
-    const dots = stepDotsContainer.querySelectorAll(".step-dot");
-    dots.forEach((dot, idx) => {
-      dot.classList.toggle("active", idx === index);
-      if (state.solutions[TASKS_DATA[idx]?.id]) {
-        dot.classList.add("completed");
-      }
-    });
-
     // Topshiriq matnlari
+    if (taskPartBadge) taskPartBadge.textContent = task.partBadge;
     taskBadge.textContent = task.badge;
     taskCategory.textContent = task.category;
     taskTitle.textContent = task.title;
@@ -195,13 +237,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateCharCount();
-    consoleOutput.textContent = `// ${task.badge} yuklandi. Kodingizni yozing va sinab ko'ring!`;
+    consoleOutput.textContent = `// [${task.partBadge}] ${task.badge} yuklandi. Kodingizni yozing va sinab ko'ring!`;
     consoleOutput.style.color = "#38bdf8";
 
     // Oxirgi topshiriq bo'lsa tugma matni o'zgaradi
     if (index === TASKS_DATA.length - 1) {
       submitBtnText.textContent = "Topshirish va Yakunlash";
       submitBtnIcon.className = "fa-solid fa-flag-checkered";
+    } else if (task.id === 12) {
+      submitBtnText.textContent = "1-Qismni yakunlab, 2-Qismga o'tish";
+      submitBtnIcon.className = "fa-solid fa-forward-step";
     } else {
       submitBtnText.textContent = "Topshirish va Keyingisi";
       submitBtnIcon.className = "fa-solid fa-arrow-right";
@@ -290,8 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
       studentName: state.studentName,
       studentGroup: state.studentGroup,
       taskId: currentTask.id,
-      taskTitle: currentTask.title,
-      fileName: state.currentFileName || "editor_kod.js",
+      taskTitle: `[${currentTask.partBadge}] ${currentTask.title}`,
+      part: currentTask.partBadge,
+      fileName: "editor_kod.js",
       code: code
     };
 
@@ -304,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
     state.solutions[currentTask.id] = {
       taskId: currentTask.id,
       taskTitle: currentTask.title,
+      partBadge: currentTask.partBadge,
       fileName: payload.fileName,
       code: code,
       date: new Date().toLocaleTimeString()
@@ -322,7 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
           },
           body: JSON.stringify(payload)
         });
-        showToast(`${currentTask.badge} Google Sheets ga muvaffaqiyatli saqlandi!`);
+        showToast(`[${currentTask.partBadge}] ${currentTask.badge} Google Sheets ga saqlandi!`);
       } catch (error) {
         console.warn("Google Sheets ga yuborishda xatolik:", error);
         showToast(`${currentTask.badge} lokal saqlandi (Google Sheets ulanmadi).`, "warning");
@@ -336,19 +383,20 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtnText.textContent = "Topshirish va Keyingisi";
     submitBtnIcon.className = "fa-solid fa-arrow-right";
 
-    // Stepper dot-ni completed qilish
-    const currentDot = stepDotsContainer.children[state.currentIndex];
-    if (currentDot) currentDot.classList.add("completed");
+    // Agar 12-topshiriq topshirilgan bo'lsa, 1-qism tugagani haqida maxsus xabar
+    if (currentTask.id === 12) {
+      showToast("🎉 1-Qism yakunlandi! Endi 2-Qism topshiriqlariga o'tamiz!", "success");
+    }
 
     // Keyingi topshiriqqa o'tish
     if (state.currentIndex < TASKS_DATA.length - 1) {
       loadTask(state.currentIndex + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Hamma topshiriq yakunlandi!
+      // Hamma 22 ta topshiriq yakunlandi!
       renderSummary();
       showScreen(completeScreen);
-      showToast("Tabriklaymiz! Barcha 12 ta topshiriq yakunlandi!", "success");
+      showToast("Tabriklaymiz! Barcha 22 ta topshiriq yakunlandi!", "success");
     }
   });
 
@@ -363,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
         : `<span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-circle-xmark"></i> Topshirilmadi</span>`;
 
       tr.innerHTML = `
-        <td><strong>${task.badge}</strong></td>
+        <td><span class="badge-part" style="font-size: 11px; padding: 2px 6px; margin-right: 6px;">${task.partBadge}</span> <strong>${task.badge}</strong></td>
         <td>${task.title}</td>
         <td>${statusBadge}</td>
       `;

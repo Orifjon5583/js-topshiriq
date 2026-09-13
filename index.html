@@ -72,14 +72,24 @@
 
     <!-- 2. Tasks Stepper Screen -->
     <section id="taskScreen" class="screen">
+      <!-- Qismlar tanlash (1-Qism / 2-Qism) -->
+      <div class="part-selector-tabs">
+        <button type="button" class="part-tab-btn active" id="partTab1" data-part="1">
+          <i class="fa-solid fa-layer-group"></i> 1-Qism: for & forEach (1 - 12)
+        </button>
+        <button type="button" class="part-tab-btn" id="partTab2" data-part="2">
+          <i class="fa-solid fa-code-merge"></i> 2-Qism: Amaliyot (13 - 22)
+        </button>
+      </div>
+
       <!-- Progress Bar & Stepper -->
       <div class="stepper-container">
         <div class="stepper-header">
           <div class="stepper-title">
             <i class="fa-solid fa-list-check" style="color: var(--primary);"></i>
-            <span>Topshiriqlar ketma-ketligi</span>
+            <span id="stepperTitleText">Topshiriqlar ketma-ketligi</span>
           </div>
-          <div class="stepper-count" id="stepCounterText">Topshiriq 1 / 12</div>
+          <div class="stepper-count" id="stepCounterText">Topshiriq 1 / 22</div>
         </div>
 
         <div class="progress-bar-bg">
@@ -87,7 +97,7 @@
         </div>
 
         <div class="step-dots" id="stepDotsContainer">
-          <!-- Dinamik 1..12 tugmalari -->
+          <!-- Dinamik tugmalar -->
         </div>
       </div>
 
@@ -96,6 +106,7 @@
         <!-- Chap tomon: Topshiriq Sharti -->
         <div class="task-card">
           <div class="task-header-badges">
+            <span class="badge-part" id="taskPartBadge">1-Qism</span>
             <span class="badge-step" id="taskBadge">1-topshiriq</span>
             <span class="badge-category" id="taskCategory">for loop</span>
           </div>

@@ -1,16 +1,20 @@
-# JavaScript Topshiriqlar Tizimi (Loop — for, forEach)
+# JavaScript Topshiriqlar Tizimi (1-Qism va 2-Qism)
 
-Ushbu platforma o'quvchilarga JavaScript loop mavzularidagi 12 ta topshiriqni bosqichma-bosqich yechish, kodini (.js fayl yoki brauzer muharririda) topshirish va natijalarni avtomatik ravishda **Google Sheets** jadvaliga saqlash imkonini beradi.
+Ushbu platforma o'quvchilarga JavaScript loop mavzularidagi 22 ta topshiriqni (2 ta qismga bo'lingan) bosqichma-bosqich yechish, kodini muharrirda tekshirib topshirish va natijalarni avtomatik ravishda **Google Sheets** jadvaliga saqlash imkonini beradi.
+
+### Qismlar:
+- **1-Qism (1 - 12 topshiriqlar):** `for` va `forEach` asosiy masalalari.
+- **2-Qism (13 - 22 topshiriqlar):** `for`, `forEach`, yig'indi hisoblash, massivlar va obyektlar bilan amaliy masalalar.
 
 ---
 
 ## Loyiha Fayllari
 
-- `index.html` — Asosiy zamonaviy veb-sahifa (UI/UX)
-- `style.css` — Dizayn, animatsiyalar, editor va stepper uslublari
-- `app.js` — Topshiriqlar oqimi, fayl o'qish, brauzerda sinash va Google Sheets ga yuborish mantiqi
-- `tasks.js` — Siz bergan 12 ta topshiriqning to'liq shartlari, maslahatlari va boshlang'ich kodlari
-- `google_apps_script.js` — Google Sheets ga ma'lumotlarni qabul qilib yozuvchi bepul Apps Script kodi
+- `index.html` — Asosiy zamonaviy veb-sahifa (UI/UX, 1-Qism va 2-Qism tablari)
+- `style.css` — Dizayn, animatsiyalar, Dark/Light rejim va stepper uslublari
+- `app.js` — Topshiriqlar oqimi, sinash konsoli va Google Sheets ga yuborish mantiqi
+- `tasks.js` — Jami 22 ta topshiriqning to'liq shartlari va maslahatlari
+- `google_apps_script.js` — Google Sheets ga ma'lumotlarni qabul qilib yozuvchi Apps Script kodi
 
 ---
 
