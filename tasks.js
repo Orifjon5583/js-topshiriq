@@ -268,3 +268,163 @@ const TASKS_DATA = [
     expectedOutput: "80\n90\n72\n100"
   }
 ];
+
+// ================= 3-QISM (Oson Test Savollari — Quiz) =================
+const QUIZ_DATA = [
+  {
+    id: 1,
+    question: "JavaScript'da 'for' siklining to'g'ri yozilish tartibi qaysi?",
+    codeSnippet: null,
+    options: [
+      "for (boshlanish; shart; qadam)",
+      "for (shart; boshlanish; qadam)",
+      "for (qadam; shart; boshlanish)",
+      "for (boshlanish; qadam; shart)"
+    ],
+    answer: 0,
+    explanation: "for siklida har doim avval boshlang'ich qiymat (let i = 0), keyin shart (i < 10) va oxirida qadam (i++) yoziladi."
+  },
+  {
+    id: 2,
+    question: "Siklda 'i++' amali nima vazifani bajaradi?",
+    codeSnippet: "for (let i = 0; i < 5; i++)",
+    options: [
+      "i qiymatini 1 taga kamaytiradi",
+      "i qiymatini 1 taga oshiradi",
+      "i qiymatini 2 ga ko'paytiradi",
+      "Siklni darhol to'xtatadi"
+    ],
+    answer: 1,
+    explanation: "i++ (inkrement) amali o'zgaruvchi qiymatini 1 taga oshirish (i = i + 1) uchun ishlatiladi."
+  },
+  {
+    id: 3,
+    question: "Quyidagi massivning '.length' xususiyati nimaga teng?",
+    codeSnippet: "const mevalar = ['Olma', 'Banan', 'Gilos'];\nconsole.log(mevalar.length);",
+    options: [
+      "2",
+      "3",
+      "4",
+      "0"
+    ],
+    answer: 1,
+    explanation: "Massivda jami 3 ta element bor, shuning uchun .length qiymati 3 ga teng."
+  },
+  {
+    id: 4,
+    question: "Siklni muddatidan oldin butunlay to'xtatib, undan chiqib ketish uchun qaysi kalit so'z ishlatiladi?",
+    codeSnippet: null,
+    options: [
+      "continue",
+      "stop",
+      "break",
+      "exit"
+    ],
+    answer: 2,
+    explanation: "'break' operatori bajarilayotgan siklni darhol butunlay to'xtatadi."
+  },
+  {
+    id: 5,
+    question: "Siklning faqat joriy qadamini o'tkazib yuborib, keyingi qadamga o'tish uchun nima ishlatiladi?",
+    codeSnippet: null,
+    options: [
+      "continue",
+      "break",
+      "pass",
+      "skip"
+    ],
+    answer: 0,
+    explanation: "'continue' joriy aylanishni to'xtatib, siklning keyingi qadamiga o'tadi."
+  },
+  {
+    id: 6,
+    question: "'forEach' metodi asosan qaysi ma'lumot turi ustida sikl aylanish uchun mo'ljallangan?",
+    codeSnippet: null,
+    options: [
+      "Faqat Raqamlar (Number)",
+      "Massivlar (Array)",
+      "Faqat Mantiqiy qiymatlar (Boolean)",
+      "HTML teglar"
+    ],
+    answer: 1,
+    explanation: "'forEach' massivlarning (Array) ichki metodi bo'lib, har bir element bo'yicha ketma-ket yurib chiqadi."
+  },
+  {
+    id: 7,
+    question: "Quyidagi kod konsolga necha marta \"Salom\" so'zini chiqaradi?",
+    codeSnippet: "for (let i = 0; i < 4; i++) {\n  console.log(\"Salom\");\n}",
+    options: [
+      "3 marta",
+      "4 marta",
+      "5 marta",
+      "Cheksiz marta"
+    ],
+    answer: 1,
+    explanation: "i = 0, 1, 2, 3 holatlari uchun jami 4 marta sikl bajariladi va 4 marta \"Salom\" chiqadi."
+  },
+  {
+    id: 8,
+    question: "Sonning juft ekanligini qaysi ifoda to'g'ri tekshiradi?",
+    codeSnippet: null,
+    options: [
+      "son / 2 === 0",
+      "son % 2 === 0",
+      "son * 2 === 0",
+      "son % 2 === 1"
+    ],
+    answer: 1,
+    explanation: "Juft sonlarni 2 ga bo'lganda qoldiq 0 bo'ladi, buni JavaScript'da 'son % 2 === 0' tekshiradi."
+  },
+  {
+    id: 9,
+    question: "Quyidagi kod konsolga nima chiqaradi?",
+    codeSnippet: "const tillar = ['HTML', 'CSS', 'JS'];\nconsole.log(tillar[1]);",
+    options: [
+      "HTML",
+      "CSS",
+      "JS",
+      "undefined"
+    ],
+    answer: 1,
+    explanation: "Massiv indekslari 0 dan boshlanadi. 0-indeks 'HTML', 1-indeks esa 'CSS' hisoblanadi."
+  },
+  {
+    id: 10,
+    question: "forEach(function(item, index) { ... }) funksiyasidagi 'item' nimani bildiradi?",
+    codeSnippet: "ismlar.forEach((item, index) => {\n  console.log(item);\n});",
+    options: [
+      "Massivning uzunligini",
+      "Elementning tartib raqamini (indeksini)",
+      "Massivdagi joriy elementning o'zini",
+      "Butun boshli massivni"
+    ],
+    answer: 2,
+    explanation: "Birinchi parametr 'item' (yoki 'el') massivdagi har bir navbatdagi element qiymatini ifodalaydi."
+  },
+  {
+    id: 11,
+    question: "Quyidagi teskari sikl nechtadan boshlanib nechagacha aylanadi?",
+    codeSnippet: "for (let i = 5; i >= 1; i--) {\n  console.log(i);\n}",
+    options: [
+      "1 dan 5 gacha o'sib boradi",
+      "5 dan 1 gacha kamayib boradi (5, 4, 3, 2, 1)",
+      "5 dan 0 gacha aylanadi",
+      "Faqat 5 sonini chiqaradi"
+    ],
+    answer: 1,
+    explanation: "i = 5 dan boshlanadi va i >= 1 sharti bajarilgunicha i-- (kamayish) bilan 5, 4, 3, 2, 1 sonlarini chiqaradi."
+  },
+  {
+    id: 12,
+    question: "Quyidagi kod ishlashi natijasida 'yigindi' o'zgaruvchisining yakuniy qiymati qancha bo'ladi?",
+    codeSnippet: "let yigindi = 0;\nconst sonlar = [10, 20, 30];\nsonlar.forEach(son => {\n  yigindi += son;\n});\nconsole.log(yigindi);",
+    options: [
+      "30",
+      "60",
+      "102030",
+      "0"
+    ],
+    answer: 1,
+    explanation: "10 + 20 + 30 = 60. forEach sikli har bir sonni yigindi o'zgaruvchisiga qo'shib boradi."
+  }
+];

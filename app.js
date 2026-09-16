@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     webhookUrl: localStorage.getItem("js_webhook_url") || "https://script.google.com/macros/s/AKfycbyVw09Dv6gNX8Uyy_ykDhtTbZrg2YxNogcHj5rMJf8OV5R1LD6oLgY96bfIWOIVrXzF/exec",
     currentIndex: 0,
     currentFileName: "",
-    solutions: JSON.parse(localStorage.getItem("js_solutions") || "{}")
+    solutions: JSON.parse(localStorage.getItem("js_solutions") || "{}"),
+    quizAnswers: JSON.parse(localStorage.getItem("js_quiz_answers") || "{}"),
+    currentQuizIndex: 0
   };
 
   // DOM Elementlar
@@ -40,7 +42,38 @@ document.addEventListener("DOMContentLoaded", () => {
   // Qismlar (Part tabs)
   const partTab1 = document.getElementById("partTab1");
   const partTab2 = document.getElementById("partTab2");
+  const partTab3 = document.getElementById("partTab3");
   const stepperTitleText = document.getElementById("stepperTitleText");
+
+  // Workspaces
+  const codeWorkspace = document.getElementById("codeWorkspace");
+  const quizWorkspace = document.getElementById("quizWorkspace");
+
+  // Quiz DOM Elementlari
+  const quizQuestionCard = document.getElementById("quizQuestionCard");
+  const quizBadge = document.getElementById("quizBadge");
+  const quizScoreText = document.getElementById("quizScoreText");
+  const quizQuestionTitle = document.getElementById("quizQuestionTitle");
+  const quizCodeBox = document.getElementById("quizCodeBox");
+  const quizCodeContent = document.getElementById("quizCodeContent");
+  const quizOptionsContainer = document.getElementById("quizOptionsContainer");
+  const quizFeedbackBox = document.getElementById("quizFeedbackBox");
+  const feedbackTitle = document.getElementById("feedbackTitle");
+  const feedbackDesc = document.getElementById("feedbackDesc");
+  const btnQuizPrev = document.getElementById("btnQuizPrev");
+  const btnQuizNext = document.getElementById("btnQuizNext");
+
+  // Quiz Yakuniy Natijalar DOM Elementlari
+  const quizResultCard = document.getElementById("quizResultCard");
+  const resultBadgeIcon = document.getElementById("resultBadgeIcon");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultSubtitle = document.getElementById("resultSubtitle");
+  const resultCorrectCount = document.getElementById("resultCorrectCount");
+  const resultWrongCount = document.getElementById("resultWrongCount");
+  const resultPercent = document.getElementById("resultPercent");
+  const quizBreakdownList = document.getElementById("quizBreakdownList");
+  const btnRestartQuiz = document.getElementById("btnRestartQuiz");
+  const btnBackToTasks = document.getElementById("btnBackToTasks");
 
   // Holatda joriy qism
   state.currentPart = 1;
@@ -151,11 +184,29 @@ document.addEventListener("DOMContentLoaded", () => {
       switchToPart(2);
     });
   }
+  if (partTab3) {
+    partTab3.addEventListener("click", () => {
+      switchToPart(3);
+    });
+  }
 
   function switchToPart(partNum) {
     state.currentPart = partNum;
-    partTab1.classList.toggle("active", partNum === 1);
-    partTab2.classList.toggle("active", partNum === 2);
+    if (partTab1) partTab1.classList.toggle("active", partNum === 1);
+    if (partTab2) partTab2.classList.toggle("active", partNum === 2);
+    if (partTab3) partTab3.classList.toggle("active", partNum === 3);
+
+    if (partNum === 3) {
+      if (codeWorkspace) codeWorkspace.style.display = "none";
+      if (quizWorkspace) quizWorkspace.style.display = "block";
+      initQuizStepper();
+      loadQuizQuestion(state.currentQuizIndex || 0);
+      showToast("3-Qism: 12 ta Oson test savollari ochildi!");
+      return;
+    }
+
+    if (codeWorkspace) codeWorkspace.style.display = "grid";
+    if (quizWorkspace) quizWorkspace.style.display = "none";
 
     // Shu qismdagi birinchi topshirilmagan (yoki birinchi) topshiriqni topish
     const partTasks = TASKS_DATA.filter(t => t.part === partNum);
@@ -166,6 +217,294 @@ document.addEventListener("DOMContentLoaded", () => {
     loadTask(targetIndex);
     showToast(`${partNum}-Qism topshiriqlari ochildi!`);
   }
+
+  // ================= 3-QISM: QUIZ (TEST) MANTIQI =================
+  function getCorrectQuizCount() {
+    return Object.values(state.quizAnswers).filter(a => a && a.isCorrect).length;
+  }
+
+  function updateQuizLiveScore() {
+    const answeredCount = Object.keys(state.quizAnswers).length;
+    const correctCount = getCorrectQuizCount();
+    if (quizScoreText) {
+      quizScoreText.textContent = `${correctCount} / ${answeredCount}`;
+    }
+  }
+
+  function initQuizStepper() {
+    stepDotsContainer.innerHTML = "";
+    stepperTitleText.textContent = "3-Qism test savollari ketma-ketligi";
+    stepCounterText.textContent = `Savol ${state.currentQuizIndex + 1} / ${QUIZ_DATA.length}`;
+    const progressPercent = ((state.currentQuizIndex + 1) / QUIZ_DATA.length) * 100;
+    progressBarFill.style.width = `${progressPercent}%`;
+
+    QUIZ_DATA.forEach((q, idx) => {
+      const dot = document.createElement("button");
+      dot.className = "step-dot";
+      dot.textContent = idx + 1;
+      dot.title = `3-Qism: ${idx + 1}-savol`;
+
+      const ans = state.quizAnswers[q.id];
+      if (ans) {
+        dot.classList.add("completed");
+        if (ans.isCorrect) {
+          dot.style.background = "#10b981";
+          dot.style.color = "#ffffff";
+          dot.style.borderColor = "#059669";
+        } else {
+          dot.style.background = "#ef4444";
+          dot.style.color = "#ffffff";
+          dot.style.borderColor = "#dc2626";
+        }
+      }
+      if (idx === state.currentQuizIndex) {
+        dot.classList.add("active");
+      }
+
+      dot.addEventListener("click", () => {
+        loadQuizQuestion(idx);
+      });
+
+      stepDotsContainer.appendChild(dot);
+    });
+  }
+
+  function loadQuizQuestion(index) {
+    if (index < 0 || index >= QUIZ_DATA.length) return;
+    state.currentQuizIndex = index;
+    const question = QUIZ_DATA[index];
+
+    if (quizQuestionCard) quizQuestionCard.style.display = "block";
+    if (quizResultCard) quizResultCard.style.display = "none";
+
+    initQuizStepper();
+    updateQuizLiveScore();
+
+    if (quizBadge) quizBadge.textContent = `${question.id}-savol`;
+    if (quizQuestionTitle) quizQuestionTitle.textContent = question.question;
+
+    if (question.codeSnippet) {
+      if (quizCodeBox) quizCodeBox.style.display = "block";
+      if (quizCodeContent) quizCodeContent.textContent = question.codeSnippet;
+    } else {
+      if (quizCodeBox) quizCodeBox.style.display = "none";
+    }
+
+    if (quizOptionsContainer) {
+      quizOptionsContainer.innerHTML = "";
+      const answered = state.quizAnswers[question.id];
+      const letters = ["A", "B", "C", "D"];
+
+      question.options.forEach((optText, optIdx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-option-btn";
+
+        const letterSpan = document.createElement("span");
+        letterSpan.className = "quiz-option-letter";
+        letterSpan.textContent = letters[optIdx];
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = optText;
+
+        btn.appendChild(letterSpan);
+        btn.appendChild(textSpan);
+
+        if (answered) {
+          btn.disabled = true;
+          if (optIdx === question.answer) {
+            btn.classList.add("correct");
+          }
+          if (optIdx === answered.selected && !answered.isCorrect) {
+            btn.classList.add("wrong");
+          }
+        } else {
+          btn.addEventListener("click", () => {
+            selectQuizOption(index, optIdx);
+          });
+        }
+
+        quizOptionsContainer.appendChild(btn);
+      });
+
+      // Tezkor javob izohi qutisi (Feedback)
+      if (answered) {
+        if (quizFeedbackBox) {
+          quizFeedbackBox.style.display = "block";
+          if (answered.isCorrect) {
+            quizFeedbackBox.className = "quiz-feedback-box correct";
+            feedbackTitle.className = "feedback-title text-correct";
+            feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-check"></i> Barakalla, to'g'ri javob!`;
+          } else {
+            quizFeedbackBox.className = "quiz-feedback-box wrong";
+            feedbackTitle.className = "feedback-title text-wrong";
+            feedbackTitle.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Noto'g'ri! To'g'ri javob: ${letters[question.answer]}) ${question.options[question.answer]}`;
+          }
+          feedbackDesc.textContent = question.explanation;
+        }
+      } else {
+        if (quizFeedbackBox) quizFeedbackBox.style.display = "none";
+      }
+    }
+
+    // Navigatsiya tugmalari
+    if (btnQuizPrev) btnQuizPrev.disabled = (index === 0);
+    if (btnQuizNext) {
+      if (index === QUIZ_DATA.length - 1) {
+        btnQuizNext.innerHTML = `<span>Natijalarni ko'rish</span> <i class="fa-solid fa-flag-checkered"></i>`;
+      } else {
+        btnQuizNext.innerHTML = `<span>Keyingi savol</span> <i class="fa-solid fa-arrow-right"></i>`;
+      }
+    }
+  }
+
+  // Variant tanlanganda — DARHOL NATIJANI KO'RSATISH
+  function selectQuizOption(questionIndex, selectedOptionIdx) {
+    const question = QUIZ_DATA[questionIndex];
+    const isCorrect = (selectedOptionIdx === question.answer);
+
+    state.quizAnswers[question.id] = {
+      selected: selectedOptionIdx,
+      isCorrect: isCorrect
+    };
+    localStorage.setItem("js_quiz_answers", JSON.stringify(state.quizAnswers));
+
+    // Shu zahoti qayta render qilamiz (to'g'ri/xato yashil/qizil rangda chiqadi)
+    loadQuizQuestion(questionIndex);
+
+    if (isCorrect) {
+      showToast("To'g'ri javob! 🎉", "success");
+    } else {
+      showToast("Xato javob! ❌ Tushuntirishni o'qing.", "error");
+    }
+
+    // Agar bu oxirgi savol bo'lsa yoki barcha 12 ta savol yechilgan bo'lsa
+    const answeredCount = Object.keys(state.quizAnswers).length;
+    if (answeredCount === QUIZ_DATA.length) {
+      setTimeout(() => {
+        showQuizResults();
+      }, 1000);
+    }
+  }
+
+  // Yakuniy tezkor natijalar kartasini ko'rsatish
+  function showQuizResults() {
+    if (quizQuestionCard) quizQuestionCard.style.display = "none";
+    if (quizResultCard) quizResultCard.style.display = "block";
+
+    const correctCount = getCorrectQuizCount();
+    const total = QUIZ_DATA.length;
+    const wrongCount = total - correctCount;
+    const percent = Math.round((correctCount / total) * 100);
+
+    if (resultCorrectCount) resultCorrectCount.textContent = correctCount;
+    if (resultWrongCount) resultWrongCount.textContent = wrongCount;
+    if (resultPercent) resultPercent.textContent = `${percent}%`;
+
+    if (resultBadgeIcon && resultTitle && resultSubtitle) {
+      if (percent >= 85) {
+        resultBadgeIcon.innerHTML = `<i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>`;
+        resultTitle.textContent = "Ajoyib Natija! 🏆";
+        resultSubtitle.textContent = `Tabriklaymiz! Siz 12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%).`;
+      } else if (percent >= 60) {
+        resultBadgeIcon.innerHTML = `<i class="fa-solid fa-award" style="color: #3b82f6;"></i>`;
+        resultTitle.textContent = "Yaxshi Natija! 🌟";
+        resultSubtitle.textContent = `Yaxshi ko'rsatkich! 12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%).`;
+      } else {
+        resultBadgeIcon.innerHTML = `<i class="fa-solid fa-book-open-reader" style="color: #6366f1;"></i>`;
+        resultTitle.textContent = "Yana mashq qiling! 📚";
+        resultSubtitle.textContent = `12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%). Qayta urinib ko'ring!`;
+      }
+    }
+
+    // Har bir savol bo'yicha tahlil ro'yxati
+    if (quizBreakdownList) {
+      quizBreakdownList.innerHTML = "";
+      QUIZ_DATA.forEach((q, idx) => {
+        const ans = state.quizAnswers[q.id];
+        const item = document.createElement("div");
+        item.className = "breakdown-item";
+
+        const isCorr = ans && ans.isCorrect;
+        const shortQ = q.question.length > 32 ? q.question.substring(0, 30) + "..." : q.question;
+        item.innerHTML = `
+          <span><strong>${idx + 1}-savol:</strong> ${shortQ}</span>
+          <span class="breakdown-status ${isCorr ? 'correct' : 'wrong'}">
+            <i class="fa-solid ${isCorr ? 'fa-check' : 'fa-xmark'}"></i>
+            ${isCorr ? "To'g'ri" : "Xato"}
+          </span>
+        `;
+        quizBreakdownList.appendChild(item);
+      });
+    }
+
+    // Natijani Google Sheets ga ham avtomatik yuborish
+    sendQuizResultsToSheets(correctCount, total, percent);
+    showToast(`Test yakunlandi! Natijangiz: ${percent}%`, "success");
+  }
+
+  // Google Sheets ga test natijasini yuborish
+  async function sendQuizResultsToSheets(correct, total, percent) {
+    if (!state.webhookUrl) return;
+    const payload = {
+      studentName: state.studentName,
+      studentGroup: state.studentGroup,
+      taskId: "3-Qism Test",
+      taskTitle: `3-Qism: 12 ta Oson Test (${correct}/${total} — ${percent}%)`,
+      part: "3-Qism",
+      fileName: "quiz_test_natija.txt",
+      code: `Talaba: ${state.studentName}\nGuruh: ${state.studentGroup}\nNatija: ${correct}/${total} ta to'g'ri (${percent}%)\nSana: ${new Date().toLocaleString()}`
+    };
+
+    try {
+      await fetch(state.webhookUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.warn("Quiz natijasini Sheets ga yuborishda xatolik:", err);
+    }
+  }
+
+  // Quiz navigatsiya tugmalari eventlari
+  if (btnQuizPrev) {
+    btnQuizPrev.addEventListener("click", () => {
+      if (state.currentQuizIndex > 0) {
+        loadQuizQuestion(state.currentQuizIndex - 1);
+      }
+    });
+  }
+
+  if (btnQuizNext) {
+    btnQuizNext.addEventListener("click", () => {
+      if (state.currentQuizIndex < QUIZ_DATA.length - 1) {
+        loadQuizQuestion(state.currentQuizIndex + 1);
+      } else {
+        showQuizResults();
+      }
+    });
+  }
+
+  if (btnRestartQuiz) {
+    btnRestartQuiz.addEventListener("click", () => {
+      if (confirm("Testni boshidan qaytadan topshirmoqchimisiz?")) {
+        state.quizAnswers = {};
+        localStorage.removeItem("js_quiz_answers");
+        state.currentQuizIndex = 0;
+        loadQuizQuestion(0);
+        showToast("Test qaytadan boshlandi!");
+      }
+    });
+  }
+
+  if (btnBackToTasks) {
+    btnBackToTasks.addEventListener("click", () => {
+      switchToPart(1);
+    });
+  }
+
 
   // Stepper tugmalarini hosil qilish
   function initStepper(partNum = state.currentPart || 1) {
@@ -208,10 +547,9 @@ document.addEventListener("DOMContentLoaded", () => {
     state.currentPart = task.part;
 
     // Qism tablarini yangilash
-    if (partTab1 && partTab2) {
-      partTab1.classList.toggle("active", task.part === 1);
-      partTab2.classList.toggle("active", task.part === 2);
-    }
+    if (partTab1) partTab1.classList.toggle("active", task.part === 1);
+    if (partTab2) partTab2.classList.toggle("active", task.part === 2);
+    if (partTab3) partTab3.classList.toggle("active", task.part === 3);
 
     // Stepper holatini yangilash
     initStepper(task.part);

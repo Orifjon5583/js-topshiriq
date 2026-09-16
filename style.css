@@ -1122,3 +1122,428 @@ body.dark .badge-part {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ================= 3-QISM: OSON TEST (QUIZ) USLUBLARI ================= */
+.quiz-workspace {
+  max-width: 840px;
+  margin: 0 auto;
+  animation: fadeIn 0.35s ease;
+}
+
+.quiz-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.quiz-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.quiz-live-score {
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+body.dark .quiz-live-score {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.quiz-question-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.quiz-code-box {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: var(--radius-sm);
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.quiz-code-header {
+  background: #1e293b;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #334155;
+}
+
+.quiz-code-box pre {
+  padding: 14px 16px;
+  margin: 0;
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  font-size: 13.5px;
+  color: #38bdf8;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.quiz-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.quiz-option-btn {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: rgba(79, 70, 229, 0.05);
+  transform: translateX(4px);
+}
+
+.quiz-option-letter {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+body.dark .quiz-option-letter {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+/* To'g'ri va xato variantlar */
+.quiz-option-btn.correct {
+  border-color: #10b981 !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #065f46 !important;
+  font-weight: 600;
+}
+
+body.dark .quiz-option-btn.correct {
+  color: #34d399 !important;
+  background: rgba(16, 185, 129, 0.2) !important;
+}
+
+.quiz-option-btn.correct .quiz-option-letter {
+  background: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.quiz-option-btn.wrong {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #991b1b !important;
+  font-weight: 600;
+}
+
+body.dark .quiz-option-btn.wrong {
+  color: #f87171 !important;
+  background: rgba(239, 68, 68, 0.2) !important;
+}
+
+.quiz-option-btn.wrong .quiz-option-letter {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.quiz-option-btn:disabled {
+  cursor: default;
+}
+
+/* Tezkor javob izohi qutisi */
+.quiz-feedback-box {
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.quiz-feedback-box.correct {
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 5px solid #10b981;
+}
+
+.quiz-feedback-box.wrong {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 5px solid #ef4444;
+}
+
+.feedback-title {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.feedback-title.text-correct {
+  color: #059669;
+}
+
+body.dark .feedback-title.text-correct {
+  color: #34d399;
+}
+
+.feedback-title.text-wrong {
+  color: #dc2626;
+}
+
+body.dark .feedback-title.text-wrong {
+  color: #f87171;
+}
+
+.feedback-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+body.dark .feedback-desc {
+  color: #cbd5e1;
+}
+
+.quiz-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-quiz-nav {
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+  border: none;
+}
+
+.btn-quiz-prev {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+body.dark .btn-quiz-prev {
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.btn-quiz-prev:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+body.dark .btn-quiz-prev:hover:not(:disabled) {
+  background: #334155;
+}
+
+.btn-quiz-prev:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-quiz-next {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.btn-quiz-next:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+/* ================= YAKUNIY NATIJA KARTASI ================= */
+.quiz-result-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 36px 30px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.result-icon-badge {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(79, 70, 229, 0.12);
+  color: var(--primary);
+  font-size: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+
+.quiz-result-header h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.quiz-result-header p {
+  color: var(--text-muted);
+  font-size: 14.5px;
+}
+
+.result-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.stat-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+body.dark .stat-card {
+  background: #151d30;
+}
+
+.stat-val {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.stat-lbl {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.text-green { color: #10b981; }
+.text-red { color: #ef4444; }
+.text-blue { color: #0284c7; }
+body.dark .text-blue { color: #38bdf8; }
+
+.quiz-breakdown-box {
+  text-align: left;
+  margin-top: 24px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+body.dark .quiz-breakdown-box {
+  background: #151d30;
+}
+
+.quiz-breakdown-box h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breakdown-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.breakdown-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+.breakdown-status.correct {
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.breakdown-status.wrong {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.quiz-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .result-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .breakdown-list {
+    grid-template-columns: 1fr;
+  }
+}

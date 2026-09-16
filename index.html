@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JavaScript Topshiriqlari — for & forEach</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -72,13 +72,16 @@
 
     <!-- 2. Tasks Stepper Screen -->
     <section id="taskScreen" class="screen">
-      <!-- Qismlar tanlash (1-Qism / 2-Qism) -->
+      <!-- Qismlar tanlash (1-Qism / 2-Qism / 3-Qism) -->
       <div class="part-selector-tabs">
         <button type="button" class="part-tab-btn active" id="partTab1" data-part="1">
           <i class="fa-solid fa-layer-group"></i> 1-Qism: for & forEach (1 - 12)
         </button>
         <button type="button" class="part-tab-btn" id="partTab2" data-part="2">
           <i class="fa-solid fa-code-merge"></i> 2-Qism: Amaliyot (13 - 22)
+        </button>
+        <button type="button" class="part-tab-btn" id="partTab3" data-part="3">
+          <i class="fa-solid fa-circle-question"></i> 3-Qism: Oson Test (1 - 12)
         </button>
       </div>
 
@@ -101,8 +104,8 @@
         </div>
       </div>
 
-      <!-- Main Workspace Grid -->
-      <div class="workspace-grid">
+      <!-- 1 va 2-Qism: Main Workspace Grid (Kod muharriri) -->
+      <div class="workspace-grid" id="codeWorkspace">
         <!-- Chap tomon: Topshiriq Sharti -->
         <div class="task-card">
           <div class="task-header-badges">
@@ -169,6 +172,100 @@
           </div>
         </div>
       </div>
+
+      <!-- 3-Qism: Oson Test (Quiz) Workspace -->
+      <div class="quiz-workspace" id="quizWorkspace" style="display: none;">
+        <!-- Savol kartochkasi -->
+        <div class="quiz-card" id="quizQuestionCard">
+          <div class="quiz-card-header">
+            <div class="task-header-badges">
+              <span class="badge-part">3-Qism</span>
+              <span class="badge-step" id="quizBadge">1-savol</span>
+              <span class="badge-category"><i class="fa-solid fa-bolt"></i> Tezkor Natija</span>
+            </div>
+            <div class="quiz-live-score" id="quizLiveScore">
+              <i class="fa-solid fa-star" style="color: #f59e0b;"></i> Ball: <span id="quizScoreText">0 / 0</span>
+            </div>
+          </div>
+
+          <h2 class="quiz-question-title" id="quizQuestionTitle">Savol matni yuklanmoqda...</h2>
+
+          <!-- Kod namunasi (agar bor bo'lsa) -->
+          <div class="quiz-code-box" id="quizCodeBox" style="display: none;">
+            <div class="quiz-code-header">
+              <i class="fa-brands fa-js" style="color: #f7df1e;"></i> Kod:
+            </div>
+            <pre><code id="quizCodeContent"></code></pre>
+          </div>
+
+          <!-- Variantlar ro'yxati -->
+          <div class="quiz-options-grid" id="quizOptionsContainer">
+            <!-- 4 ta variant dinamik generatsiya qilinadi -->
+          </div>
+
+          <!-- Tezkor Feedback (shu zahoti ko'rinadi) -->
+          <div class="quiz-feedback-box" id="quizFeedbackBox" style="display: none;">
+            <div class="feedback-title" id="feedbackTitle">
+              <i class="fa-solid fa-circle-check"></i> To'g'ri javob!
+            </div>
+            <p class="feedback-desc" id="feedbackDesc">Savol izohi bu yerda chiqadi.</p>
+          </div>
+
+          <!-- Boshqaruv tugmalari -->
+          <div class="quiz-footer">
+            <button type="button" class="btn-quiz-nav btn-quiz-prev" id="btnQuizPrev">
+              <i class="fa-solid fa-arrow-left"></i> Oldingi savol
+            </button>
+            <button type="button" class="btn-quiz-nav btn-quiz-next" id="btnQuizNext">
+              <span>Keyingi savol</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Yakuniy Natijalar Kartasi (12 ta savoldan so'ng shu zahoti ekranda chiqadi) -->
+        <div class="quiz-result-card" id="quizResultCard" style="display: none;">
+          <div class="quiz-result-header">
+            <div class="result-icon-badge" id="resultBadgeIcon">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <h2 id="resultTitle">Test Yakunlandi!</h2>
+            <p id="resultSubtitle">12 ta savoldan iborat oson test natijalari:</p>
+          </div>
+
+          <div class="result-stats-grid">
+            <div class="stat-card stat-correct">
+              <span class="stat-val text-green" id="resultCorrectCount">0</span>
+              <span class="stat-lbl">To'g'ri javoblar</span>
+            </div>
+            <div class="stat-card stat-wrong">
+              <span class="stat-val text-red" id="resultWrongCount">0</span>
+              <span class="stat-lbl">Xato javoblar</span>
+            </div>
+            <div class="stat-card stat-percent">
+              <span class="stat-val text-blue" id="resultPercent">0%</span>
+              <span class="stat-lbl">Umumiy Natija</span>
+            </div>
+          </div>
+
+          <div class="quiz-breakdown-box">
+            <h3><i class="fa-solid fa-list-check"></i> Savollar tahlili:</h3>
+            <div class="breakdown-list" id="quizBreakdownList">
+              <!-- 12 ta savol bo'yicha tahlil -->
+            </div>
+          </div>
+
+          <div class="quiz-result-actions">
+            <button type="button" class="btn-primary" id="btnRestartQuiz">
+              <i class="fa-solid fa-rotate-left"></i> Testni qaytadan boshlash
+            </button>
+            <button type="button" class="btn-secondary" id="btnBackToTasks">
+              <i class="fa-solid fa-code"></i> Kod topshiriqlariga qaytish
+            </button>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- 3. Completion Screen (Tabrik va xulosa) -->
@@ -177,8 +274,8 @@
         <div class="congrats-icon">
           <i class="fa-solid fa-check"></i>
         </div>
-        <h2>Tabriklaymiz! Barcha topshiriqlar topshirildi!</h2>
-        <p>Barcha 12 ta topshiriq kodi muvaffaqiyatli qabul qilindi va Google Sheets jadvaliga yuklandi.</p>
+        <h2>Tabriklaymiz! Barcha topshiriqlar muvaffaqiyatli topshirildi!</h2>
+        <p>Barcha topshiriqlar kodi qabul qilindi va Google Sheets jadvaliga yuklandi.</p>
 
         <table class="summary-table">
           <thead>
@@ -193,7 +290,7 @@
           </tbody>
         </table>
 
-        <button type="button" class="btn-primary" id="btnRestart" style="max-width: 280px; margin: 0 auto;">
+        <button type="button" class="btn-secondary" id="btnRestart" style="max-width: 280px; margin: 0 auto;">
           <i class="fa-solid fa-rotate-left"></i> Boshidan qayta topshirish
         </button>
       </div>
@@ -241,7 +338,8 @@
     <span id="toastMsg">Xabar</span>
   </div>
 
-  <script src="tasks.js"></script>
-  <script src="app.js"></script>
+  <script src="tasks.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
+

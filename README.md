@@ -3,8 +3,9 @@
 Ushbu platforma o'quvchilarga JavaScript loop mavzularidagi 22 ta topshiriqni (2 ta qismga bo'lingan) bosqichma-bosqich yechish, kodini muharrirda tekshirib topshirish va natijalarni avtomatik ravishda **Google Sheets** jadvaliga saqlash imkonini beradi.
 
 ### Qismlar:
-- **1-Qism (1 - 12 topshiriqlar):** `for` va `forEach` asosiy masalalari.
-- **2-Qism (13 - 22 topshiriqlar):** `for`, `forEach`, yig'indi hisoblash, massivlar va obyektlar bilan amaliy masalalar.
+- **1-Qism (1 - 12 topshiriqlar):** `for` va `forEach` asosiy masalalari (kod yozish).
+- **2-Qism (13 - 22 topshiriqlar):** `for`, `forEach`, yig'indi hisoblash, massivlar va obyektlar bilan amaliy masalalar (kod yozish).
+- **3-Qism (1 - 12 savollar):** Oson test (Quiz) — variantli savollar bo'lib, natija shu zahoti ekranda (har bir savol bo'yicha va yakuniy ball shaklida) ko'rsatiladi.
 
 ---
 
