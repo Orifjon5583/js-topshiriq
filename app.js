@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentFileName: "",
     solutions: JSON.parse(localStorage.getItem("js_solutions") || "{}"),
     quizAnswers: JSON.parse(localStorage.getItem("js_quiz_answers") || "{}"),
-    currentQuizIndex: 0
+    quizAnswersPart4: JSON.parse(localStorage.getItem("js_quiz_answers_part4") || "{}"),
+    currentQuizIndex: 0,
+    currentQuizIndexPart4: 0
   };
 
   // DOM Elementlar
@@ -43,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const partTab1 = document.getElementById("partTab1");
   const partTab2 = document.getElementById("partTab2");
   const partTab3 = document.getElementById("partTab3");
+  const partTab4 = document.getElementById("partTab4");
   const stepperTitleText = document.getElementById("stepperTitleText");
 
   // Workspaces
@@ -51,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Quiz DOM Elementlari
   const quizQuestionCard = document.getElementById("quizQuestionCard");
+  const quizPartBadge = document.getElementById("quizPartBadge");
   const quizBadge = document.getElementById("quizBadge");
   const quizScoreText = document.getElementById("quizScoreText");
   const quizQuestionTitle = document.getElementById("quizQuestionTitle");
@@ -189,19 +193,25 @@ document.addEventListener("DOMContentLoaded", () => {
       switchToPart(3);
     });
   }
+  if (partTab4) {
+    partTab4.addEventListener("click", () => {
+      switchToPart(4);
+    });
+  }
 
   function switchToPart(partNum) {
     state.currentPart = partNum;
     if (partTab1) partTab1.classList.toggle("active", partNum === 1);
     if (partTab2) partTab2.classList.toggle("active", partNum === 2);
     if (partTab3) partTab3.classList.toggle("active", partNum === 3);
+    if (partTab4) partTab4.classList.toggle("active", partNum === 4);
 
-    if (partNum === 3) {
+    if (partNum === 3 || partNum === 4) {
       if (codeWorkspace) codeWorkspace.style.display = "none";
       if (quizWorkspace) quizWorkspace.style.display = "block";
       initQuizStepper();
-      loadQuizQuestion(state.currentQuizIndex || 0);
-      showToast("3-Qism: 12 ta Oson test savollari ochildi!");
+      loadQuizQuestion(getCurrentQuizIndex());
+      showToast(`${partNum}-Qism: 12 ta ${partNum === 4 ? "Amaliy" : "Oson"} test savollari ochildi!`);
       return;
     }
 
@@ -218,13 +228,45 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`${partNum}-Qism topshiriqlari ochildi!`);
   }
 
-  // ================= 3-QISM: QUIZ (TEST) MANTIQI =================
+  // ================= 3-QISM VA 4-QISM: QUIZ (TEST) MANTIQI =================
+  function getCurrentQuizData() {
+    return state.currentPart === 4 ? QUIZ_DATA_PART4 : QUIZ_DATA;
+  }
+
+  function getCurrentQuizAnswers() {
+    return state.currentPart === 4 ? state.quizAnswersPart4 : state.quizAnswers;
+  }
+
+  function setCurrentQuizAnswers(answers) {
+    if (state.currentPart === 4) {
+      state.quizAnswersPart4 = answers;
+      localStorage.setItem("js_quiz_answers_part4", JSON.stringify(answers));
+    } else {
+      state.quizAnswers = answers;
+      localStorage.setItem("js_quiz_answers", JSON.stringify(answers));
+    }
+  }
+
+  function getCurrentQuizIndex() {
+    return state.currentPart === 4 ? (state.currentQuizIndexPart4 || 0) : (state.currentQuizIndex || 0);
+  }
+
+  function setCurrentQuizIndex(idx) {
+    if (state.currentPart === 4) {
+      state.currentQuizIndexPart4 = idx;
+    } else {
+      state.currentQuizIndex = idx;
+    }
+  }
+
   function getCorrectQuizCount() {
-    return Object.values(state.quizAnswers).filter(a => a && a.isCorrect).length;
+    const answers = getCurrentQuizAnswers();
+    return Object.values(answers).filter(a => a && a.isCorrect).length;
   }
 
   function updateQuizLiveScore() {
-    const answeredCount = Object.keys(state.quizAnswers).length;
+    const answers = getCurrentQuizAnswers();
+    const answeredCount = Object.keys(answers).length;
     const correctCount = getCorrectQuizCount();
     if (quizScoreText) {
       quizScoreText.textContent = `${correctCount} / ${answeredCount}`;
@@ -233,18 +275,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initQuizStepper() {
     stepDotsContainer.innerHTML = "";
-    stepperTitleText.textContent = "3-Qism test savollari ketma-ketligi";
-    stepCounterText.textContent = `Savol ${state.currentQuizIndex + 1} / ${QUIZ_DATA.length}`;
-    const progressPercent = ((state.currentQuizIndex + 1) / QUIZ_DATA.length) * 100;
+    const quizData = getCurrentQuizData();
+    const curIdx = getCurrentQuizIndex();
+    const answers = getCurrentQuizAnswers();
+
+    const quizTypeTitle = state.currentPart === 4 ? "4-Qism amaliy test savollari" : "3-Qism test savollari";
+    stepperTitleText.textContent = `${quizTypeTitle} ketma-ketligi`;
+    stepCounterText.textContent = `Savol ${curIdx + 1} / ${quizData.length}`;
+    const progressPercent = ((curIdx + 1) / quizData.length) * 100;
     progressBarFill.style.width = `${progressPercent}%`;
 
-    QUIZ_DATA.forEach((q, idx) => {
+    quizData.forEach((q, idx) => {
       const dot = document.createElement("button");
       dot.className = "step-dot";
       dot.textContent = idx + 1;
-      dot.title = `3-Qism: ${idx + 1}-savol`;
+      dot.title = `${state.currentPart}-Qism: ${idx + 1}-savol`;
 
-      const ans = state.quizAnswers[q.id];
+      const ans = answers[q.id];
       if (ans) {
         dot.classList.add("completed");
         if (ans.isCorrect) {
@@ -257,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
           dot.style.borderColor = "#dc2626";
         }
       }
-      if (idx === state.currentQuizIndex) {
+      if (idx === curIdx) {
         dot.classList.add("active");
       }
 
@@ -270,9 +317,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function loadQuizQuestion(index) {
-    if (index < 0 || index >= QUIZ_DATA.length) return;
-    state.currentQuizIndex = index;
-    const question = QUIZ_DATA[index];
+    const quizData = getCurrentQuizData();
+    if (index < 0 || index >= quizData.length) return;
+    setCurrentQuizIndex(index);
+    const question = quizData[index];
+    const answers = getCurrentQuizAnswers();
 
     if (quizQuestionCard) quizQuestionCard.style.display = "block";
     if (quizResultCard) quizResultCard.style.display = "none";
@@ -280,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initQuizStepper();
     updateQuizLiveScore();
 
+    if (quizPartBadge) quizPartBadge.textContent = `${state.currentPart}-Qism`;
     if (quizBadge) quizBadge.textContent = `${question.id}-savol`;
     if (quizQuestionTitle) quizQuestionTitle.textContent = question.question;
 
@@ -292,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (quizOptionsContainer) {
       quizOptionsContainer.innerHTML = "";
-      const answered = state.quizAnswers[question.id];
+      const answered = answers[question.id];
       const letters = ["A", "B", "C", "D"];
 
       question.options.forEach((optText, optIdx) => {
@@ -350,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Navigatsiya tugmalari
     if (btnQuizPrev) btnQuizPrev.disabled = (index === 0);
     if (btnQuizNext) {
-      if (index === QUIZ_DATA.length - 1) {
+      if (index === quizData.length - 1) {
         btnQuizNext.innerHTML = `<span>Natijalarni ko'rish</span> <i class="fa-solid fa-flag-checkered"></i>`;
       } else {
         btnQuizNext.innerHTML = `<span>Keyingi savol</span> <i class="fa-solid fa-arrow-right"></i>`;
@@ -360,14 +410,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Variant tanlanganda — DARHOL NATIJANI KO'RSATISH
   function selectQuizOption(questionIndex, selectedOptionIdx) {
-    const question = QUIZ_DATA[questionIndex];
+    const quizData = getCurrentQuizData();
+    const question = quizData[questionIndex];
     const isCorrect = (selectedOptionIdx === question.answer);
+    const answers = getCurrentQuizAnswers();
 
-    state.quizAnswers[question.id] = {
+    answers[question.id] = {
       selected: selectedOptionIdx,
       isCorrect: isCorrect
     };
-    localStorage.setItem("js_quiz_answers", JSON.stringify(state.quizAnswers));
+    setCurrentQuizAnswers(answers);
 
     // Shu zahoti qayta render qilamiz (to'g'ri/xato yashil/qizil rangda chiqadi)
     loadQuizQuestion(questionIndex);
@@ -379,8 +431,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Agar bu oxirgi savol bo'lsa yoki barcha 12 ta savol yechilgan bo'lsa
-    const answeredCount = Object.keys(state.quizAnswers).length;
-    if (answeredCount === QUIZ_DATA.length) {
+    const answeredCount = Object.keys(answers).length;
+    if (answeredCount === quizData.length) {
       setTimeout(() => {
         showQuizResults();
       }, 1000);
@@ -392,8 +444,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (quizQuestionCard) quizQuestionCard.style.display = "none";
     if (quizResultCard) quizResultCard.style.display = "block";
 
+    const quizData = getCurrentQuizData();
+    const answers = getCurrentQuizAnswers();
     const correctCount = getCorrectQuizCount();
-    const total = QUIZ_DATA.length;
+    const total = quizData.length;
     const wrongCount = total - correctCount;
     const percent = Math.round((correctCount / total) * 100);
 
@@ -401,18 +455,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resultWrongCount) resultWrongCount.textContent = wrongCount;
     if (resultPercent) resultPercent.textContent = `${percent}%`;
 
+    const quizLabel = state.currentPart === 4 ? "Amaliy Test" : "Oson Test";
+
     if (resultBadgeIcon && resultTitle && resultSubtitle) {
       if (percent >= 85) {
         resultBadgeIcon.innerHTML = `<i class="fa-solid fa-trophy" style="color: #f59e0b;"></i>`;
-        resultTitle.textContent = "Ajoyib Natija! 🏆";
+        resultTitle.textContent = `${state.currentPart}-Qism (${quizLabel}): Ajoyib Natija! 🏆`;
         resultSubtitle.textContent = `Tabriklaymiz! Siz 12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%).`;
       } else if (percent >= 60) {
         resultBadgeIcon.innerHTML = `<i class="fa-solid fa-award" style="color: #3b82f6;"></i>`;
-        resultTitle.textContent = "Yaxshi Natija! 🌟";
+        resultTitle.textContent = `${state.currentPart}-Qism (${quizLabel}): Yaxshi Natija! 🌟`;
         resultSubtitle.textContent = `Yaxshi ko'rsatkich! 12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%).`;
       } else {
         resultBadgeIcon.innerHTML = `<i class="fa-solid fa-book-open-reader" style="color: #6366f1;"></i>`;
-        resultTitle.textContent = "Yana mashq qiling! 📚";
+        resultTitle.textContent = `${state.currentPart}-Qism (${quizLabel}): Yana mashq qiling! 📚`;
         resultSubtitle.textContent = `12 ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz (${percent}%). Qayta urinib ko'ring!`;
       }
     }
@@ -420,8 +476,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Har bir savol bo'yicha tahlil ro'yxati
     if (quizBreakdownList) {
       quizBreakdownList.innerHTML = "";
-      QUIZ_DATA.forEach((q, idx) => {
-        const ans = state.quizAnswers[q.id];
+      quizData.forEach((q, idx) => {
+        const ans = answers[q.id];
         const item = document.createElement("div");
         item.className = "breakdown-item";
 
@@ -440,20 +496,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Natijani Google Sheets ga ham avtomatik yuborish
     sendQuizResultsToSheets(correctCount, total, percent);
-    showToast(`Test yakunlandi! Natijangiz: ${percent}%`, "success");
+    showToast(`${state.currentPart}-Qism Test yakunlandi! Natijangiz: ${percent}%`, "success");
   }
 
   // Google Sheets ga test natijasini yuborish
   async function sendQuizResultsToSheets(correct, total, percent) {
     if (!state.webhookUrl) return;
+    const quizTitlePart = state.currentPart === 4 ? "4-Qism: 12 ta Amaliy Test" : "3-Qism: 12 ta Oson Test";
     const payload = {
       studentName: state.studentName,
       studentGroup: state.studentGroup,
-      taskId: "3-Qism Test",
-      taskTitle: `3-Qism: 12 ta Oson Test (${correct}/${total} — ${percent}%)`,
-      part: "3-Qism",
-      fileName: "quiz_test_natija.txt",
-      code: `Talaba: ${state.studentName}\nGuruh: ${state.studentGroup}\nNatija: ${correct}/${total} ta to'g'ri (${percent}%)\nSana: ${new Date().toLocaleString()}`
+      taskId: `${state.currentPart}-Qism Test`,
+      taskTitle: `${quizTitlePart} (${correct}/${total} — ${percent}%)`,
+      part: `${state.currentPart}-Qism`,
+      fileName: `quiz_part${state.currentPart}_natija.txt`,
+      code: `Talaba: ${state.studentName}\nGuruh: ${state.studentGroup}\nQism: ${state.currentPart}-Qism (${quizTitlePart})\nNatija: ${correct}/${total} ta to'g'ri (${percent}%)\nSana: ${new Date().toLocaleString()}`
     };
 
     try {
@@ -471,16 +528,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Quiz navigatsiya tugmalari eventlari
   if (btnQuizPrev) {
     btnQuizPrev.addEventListener("click", () => {
-      if (state.currentQuizIndex > 0) {
-        loadQuizQuestion(state.currentQuizIndex - 1);
+      const curIdx = getCurrentQuizIndex();
+      if (curIdx > 0) {
+        loadQuizQuestion(curIdx - 1);
       }
     });
   }
 
   if (btnQuizNext) {
     btnQuizNext.addEventListener("click", () => {
-      if (state.currentQuizIndex < QUIZ_DATA.length - 1) {
-        loadQuizQuestion(state.currentQuizIndex + 1);
+      const quizData = getCurrentQuizData();
+      const curIdx = getCurrentQuizIndex();
+      if (curIdx < quizData.length - 1) {
+        loadQuizQuestion(curIdx + 1);
       } else {
         showQuizResults();
       }
@@ -489,12 +549,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnRestartQuiz) {
     btnRestartQuiz.addEventListener("click", () => {
-      if (confirm("Testni boshidan qaytadan topshirmoqchimisiz?")) {
-        state.quizAnswers = {};
-        localStorage.removeItem("js_quiz_answers");
-        state.currentQuizIndex = 0;
+      if (confirm(`${state.currentPart}-Qism testini boshidan qaytadan topshirmoqchimisiz?`)) {
+        setCurrentQuizAnswers({});
+        setCurrentQuizIndex(0);
         loadQuizQuestion(0);
-        showToast("Test qaytadan boshlandi!");
+        showToast(`${state.currentPart}-Qism testi qaytadan boshlandi!`);
       }
     });
   }

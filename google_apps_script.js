@@ -28,12 +28,14 @@ function doPost(e) {
     const fileName = data.fileName || "editor_kod.js";
     const code = data.code || "";
     
-    // Qismni aniqlash (1-Qism yoki 2-Qism)
-    let sheetName = "1-Qism";
-    let partName = "1-Qism";
-    if (data.part === "2-Qism" || taskId > 12) {
-      sheetName = "2-Qism";
-      partName = "2-Qism";
+    // Qismni aniqlash (1-Qism, 2-Qism, 3-Qism yoki 4-Qism)
+    let sheetName = data.part || "1-Qism";
+    let partName = data.part || "1-Qism";
+    if (!data.part) {
+      if (taskId > 12) {
+        sheetName = "2-Qism";
+        partName = "2-Qism";
+      }
     }
     
     // Kerakli varaqni topish yoki yangi yaratish
@@ -49,18 +51,20 @@ function doPost(e) {
         "Qism",
         "O'quvchi Ismi", 
         "Guruhi / Telefon", 
-        "Topshiriq №", 
-        "Topshiriq Nomi", 
+        "Topshiriq / Savol №", 
+        "Topshiriq / Test Nomi", 
         "Yuklangan Fayl", 
-        "Yechim Kodi"
+        "Yechim / Natija"
       ];
       sheet.appendRow(headers);
       
-      // Sarlavha dizayni
+      // Sarlavha dizayni: 1-qism ko'k, 2-qism binafsharang, 3-qism sariq, 4-qism yashil
       const headerRange = sheet.getRange(1, 1, 1, headers.length);
       headerRange.setFontWeight("bold");
-      // 1-qism ko'k, 2-qism binafsharang/yashil
-      const headerBg = (sheetName === "1-Qism") ? "#3b82f6" : "#8b5cf6";
+      let headerBg = "#3b82f6";
+      if (sheetName === "2-Qism") headerBg = "#8b5cf6";
+      else if (sheetName === "3-Qism") headerBg = "#f59e0b";
+      else if (sheetName === "4-Qism") headerBg = "#10b981";
       headerRange.setBackground(headerBg);
       headerRange.setFontColor("#ffffff");
       sheet.setFrozenRows(1);

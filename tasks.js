@@ -428,3 +428,164 @@ const QUIZ_DATA = [
     explanation: "10 + 20 + 30 = 60. forEach sikli har bir sonni yigindi o'zgaruvchisiga qo'shib boradi."
   }
 ];
+
+// ================= 4-QISM (Amaliy Test Savollari — 2-Bosqich Quiz) =================
+const QUIZ_DATA_PART4 = [
+  {
+    id: 1,
+    question: "'break' operatori if sharti ichida bajarilganda natija nima bo'ladi?",
+    codeSnippet: "for (let i = 1; i <= 5; i++) {\n  if (i === 3) break;\n  console.log(i);\n}",
+    options: [
+      "1 va 2 chiqadi",
+      "1, 2, 3 chiqadi",
+      "1, 2, 4, 5 chiqadi",
+      "3, 4, 5 chiqadi"
+    ],
+    answer: 0,
+    explanation: "i = 3 bo'lganda 'break' ishga tushadi va butun sikl darhol to'xtaydi. Shuning uchun faqat 1 va 2 chiqadi."
+  },
+  {
+    id: 2,
+    question: "'continue' operatori ishlaganda qaysi sonlar konsolga chiqadi?",
+    codeSnippet: "for (let i = 1; i <= 4; i++) {\n  if (i === 2) continue;\n  console.log(i);\n}",
+    options: [
+      "1, 2, 3, 4",
+      "1, 3, 4",
+      "Faqat 2",
+      "1 va 2"
+    ],
+    answer: 1,
+    explanation: "i = 2 bo'lganda 'continue' joriy qadamni o'tkazib yuboradi, shuning uchun 2 konsolga chiqmaydi, qolgan 1, 3, 4 chiqadi."
+  },
+  {
+    id: 3,
+    question: "Ushbu sikl nima uchun cheksiz (infinite loop) bo'lib qoladi?",
+    codeSnippet: "for (let i = 0; i < 5; ) {\n  console.log(i);\n}",
+    options: [
+      "Sikl sharti xato yozilgan",
+      "Qadam (i++) yozilmagani uchun i qiymati doim 0 bo'lib qolaveradi",
+      "Sikl 0 dan boshlangani uchun",
+      "let o'rniga const ishlatilishi kerak"
+    ],
+    answer: 1,
+    explanation: "Siklda i qiymatini o'zgartiruvchi qadam (inkrement i++) yo'q, shuning uchun i < 5 sharti doim rost bo'lib qoladi va cheksiz aylanadi."
+  },
+  {
+    id: 4,
+    question: "Ushbu kod bajarilgach, 'juftlar' massivi tarkibi qanday bo'ladi?",
+    codeSnippet: "const juftlar = [];\nfor (let i = 1; i <= 6; i++) {\n  if (i % 2 === 0) juftlar.push(i);\n}\nconsole.log(juftlar);",
+    options: [
+      "[1, 3, 5]",
+      "[2, 4, 6]",
+      "[6]",
+      "3"
+    ],
+    answer: 1,
+    explanation: "1 dan 6 gacha bo'lgan juft sonlar (2, 4, 6) push() metodi orqali massivga yig'iladi: [2, 4, 6]."
+  },
+  {
+    id: 5,
+    question: "forEach metodidagi ikkinchi 'i' (index) parametri yordamida nima ekranga chiqadi?",
+    codeSnippet: "const harflar = ['A', 'B', 'C'];\nharflar.forEach((harf, i) => {\n  if (i === 1) console.log(harf);\n});",
+    options: [
+      "A",
+      "B",
+      "C",
+      "1"
+    ],
+    answer: 1,
+    explanation: "Massiv indekslari 0 dan boshlanadi. 0-indeks 'A', 1-indeks esa 'B'. Shuning uchun 'B' konsolga chiqadi."
+  },
+  {
+    id: 6,
+    question: "Ushbu ichma-ich (nested) siklda 'sanoq' o'zgaruvchisi oxirida nechaga teng bo'ladi?",
+    codeSnippet: "let sanoq = 0;\nfor (let i = 0; i < 3; i++) {\n  for (let j = 0; j < 2; j++) {\n    sanoq++;\n  }\n}\nconsole.log(sanoq);",
+    options: [
+      "5",
+      "6",
+      "9",
+      "3"
+    ],
+    answer: 1,
+    explanation: "Tashqi sikl 3 marta, ichki sikl har birida 2 marta aylanadi: 3 * 2 = 6 marta sanoq++ bajariladi."
+  },
+  {
+    id: 7,
+    question: "Matnning oxirgi belgisini olish uchun qaysi indeks to'g'ri ishlatilgan?",
+    codeSnippet: "const soz = \"SALOM\";\nconsole.log(soz[soz.length - 1]);",
+    options: [
+      "S",
+      "M",
+      "undefined",
+      "5"
+    ],
+    answer: 1,
+    explanation: "soz.length = 5, soz[4] esa oxirgi 'M' harfini bildiradi (indekslar 0 dan boshlanganligi uchun length - 1 bo'ladi)."
+  },
+  {
+    id: 8,
+    question: "for siklida hisoblagich 'const' bilan e'lon qilinsa nima yuz beradi?",
+    codeSnippet: "for (const i = 0; i < 3; i++) {\n  console.log(i);\n}",
+    options: [
+      "0, 1, 2 sonlari normal chiqadi",
+      "TypeError xatolik beradi (const qiymatini i++ bilan o'zgartirib bo'lmaydi)",
+      "Faqat 0 chiqadi",
+      "Cheksiz 0 soni chiqadi"
+    ],
+    answer: 1,
+    explanation: "const o'zgaruvchi qiymatini qayta o'zgartirib bo'lmaydi. i++ amali i = i + 1 ga teng bo'lgani sababli TypeError xatolik yuzaga keladi."
+  },
+  {
+    id: 9,
+    question: "Ushbu algoritm massivdan qanday natijani topib konsolga chiqaradi?",
+    codeSnippet: "const sonlar = [14, 5, 89, 23];\nlet max = sonlar[0];\nsonlar.forEach(son => {\n  if (son > max) max = son;\n});\nconsole.log(max);",
+    options: [
+      "14",
+      "89",
+      "23",
+      "5"
+    ],
+    answer: 1,
+    explanation: "Har bir son 'max' bilan taqqoslanadi va eng kattasi (89) max ga o'zlashtirilib oxirida chiqariladi."
+  },
+  {
+    id: 10,
+    question: "Quyidagi obyektlar massividan qaysi meva nomlari filtrlanib chiqadi?",
+    codeSnippet: "const mevalar = [\n  { nom: 'Olma', narx: 8000 },\n  { nom: 'Uzum', narx: 15000 },\n  { nom: 'Nok', narx: 12000 }\n];\nmevalar.forEach(m => {\n  if (m.narx > 10000) console.log(m.nom);\n});",
+    options: [
+      "Olma",
+      "Uzum va Nok",
+      "Faqat Nok",
+      "Barcha mevalar"
+    ],
+    answer: 1,
+    explanation: "Narxi 10000 dan yuqori bo'lgan mevalar Uzum (15000) va Nok (12000) bo'lib, ikkalasi konsolga chiqadi."
+  },
+  {
+    id: 11,
+    question: "JavaScript 'for...of' siklida 'rang' o'zgaruvchisiga nima kelib tushadi?",
+    codeSnippet: "const ranglar = ['Qizil', 'Yashil', 'Ko‘k'];\nfor (let rang of ranglar) {\n  console.log(rang);\n}",
+    options: [
+      "Massiv elementlarining indekslari (0, 1, 2)",
+      "Massiv elementlarining o'zi ('Qizil', 'Yashil', 'Ko‘k')",
+      "Massiv uzunligi (3)",
+      "Faqat birinchi element"
+    ],
+    answer: 1,
+    explanation: "'for...of' to'g'ridan-to'g'ri massiv elementlarining qiymatlari bo'yicha aylanadi, indekslar uchun esa 'for...in' ishlatiladi."
+  },
+  {
+    id: 12,
+    question: "Sikl ichida satrlarni birlashtirish natijasida konsolga nima chiqadi?",
+    codeSnippet: "let natija = \"\";\nfor (let i = 1; i <= 3; i++) {\n  natija += i + \"-\";\n}\nconsole.log(natija);",
+    options: [
+      "\"1-2-3-\"",
+      "\"6-\"",
+      "\"123\"",
+      "\"1- 2- 3-\""
+    ],
+    answer: 0,
+    explanation: "Har bir qadamda natijaga i va '-' belgisi qo'shiladi: '1-' + '2-' + '3-' natijada '1-2-3-' hosil bo'ladi."
+  }
+];
+

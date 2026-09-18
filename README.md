@@ -5,7 +5,8 @@ Ushbu platforma o'quvchilarga JavaScript loop mavzularidagi 22 ta topshiriqni (2
 ### Qismlar:
 - **1-Qism (1 - 12 topshiriqlar):** `for` va `forEach` asosiy masalalari (kod yozish).
 - **2-Qism (13 - 22 topshiriqlar):** `for`, `forEach`, yig'indi hisoblash, massivlar va obyektlar bilan amaliy masalalar (kod yozish).
-- **3-Qism (1 - 12 savollar):** Oson test (Quiz) — variantli savollar bo'lib, natija shu zahoti ekranda (har bir savol bo'yicha va yakuniy ball shaklida) ko'rsatiladi.
+- **3-Qism (1 - 12 savollar):** Oson test (Quiz) — variantli savollar bo'lib, natija shu zahoti ekranda ko'rsatiladi.
+- **4-Qism (1 - 12 savollar):** Amaliy test (Quiz) — `break`, `continue`, massiv metodlari, nested loops va mantiqiy savollar, natija avtomatik hisoblanadi.
 
 ---
 
