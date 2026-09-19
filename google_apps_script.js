@@ -1,10 +1,15 @@
 /**
- * GOOGLE APPS SCRIPT KODI (2 ta qismni alohida varaqlarga ajratuvchi)
+ * =========================================================================
+ * GOOGLE APPS SCRIPT KODI (5 ta qismni avtomatik alohida varaqlarga ajratuvchi)
+ * =========================================================================
  * 
- * Ushbu kod topshiriqlarni avtomatik tarzda Google Sheets da:
- * - "1-Qism" varag'iga (1..12 topshiriqlar)
- * - "2-Qism" varag'iga (13..22 topshiriqlar)
- * alohida-alohida tartibli qilib yozadi!
+ * Ushbu kod barcha 5 ta qism natijalarini Google Sheets jadvalingizda:
+ * - "1-Qism" (1..12 kodli topshiriqlar) — Moviy rang
+ * - "2-Qism" (13..22 amaliy topshiriqlar) — Binafsha rang
+ * - "3-Qism" (Oson test — 12 ta savol) — To'q sariq rang
+ * - "4-Qism" (Amaliy test — 12 ta savol) — Yashil rang
+ * - "5-Qism" (O'zgaruvchilar va turlar testi — 12 ta savol) — Pushti rang
+ * alohida varaqlarga (Sheets) tartibli va chiroyli tarzda saqlaydi!
  */
 
 function doPost(e) {
@@ -18,63 +23,88 @@ function doPost(e) {
       data = e.parameter;
     }
     
+    // Toshkent vaqti bilan sanani olish
     const now = new Date();
     const formattedDate = Utilities.formatDate(now, "GMT+5", "yyyy-MM-dd HH:mm:ss");
     
     const studentName = data.studentName || "Noma'lum";
     const studentGroup = data.studentGroup || "-";
-    const taskId = parseInt(data.taskId) || 1;
+    const taskId = data.taskId || 1;
     const taskTitle = data.taskTitle || "-";
-    const fileName = data.fileName || "editor_kod.js";
+    const fileName = data.fileName || "kod.js";
     const code = data.code || "";
     
-    // Qismni aniqlash (1-Qism, 2-Qism, 3-Qism yoki 4-Qism)
-    let sheetName = data.part || "1-Qism";
-    let partName = data.part || "1-Qism";
-    if (!data.part) {
-      if (taskId > 12) {
-        sheetName = "2-Qism";
-        partName = "2-Qism";
-      }
+    // Qismni aniqlash (1-Qism, 2-Qism, 3-Qism, 4-Qism, 5-Qism)
+    let sheetName = "1-Qism";
+    if (data.part) {
+      sheetName = data.part;
+    } else if (typeof taskId === "number" && taskId > 12) {
+      sheetName = "2-Qism";
     }
     
-    // Kerakli varaqni topish yoki yangi yaratish
+    // Kerakli varaqni (Sheet) topish yoki yangi ochish
     let sheet = ss.getSheetByName(sheetName);
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
     }
     
-    // Agar ushbu varaq bo'sh bo'lsa, sarlavhalarni qo'yish
+    // Agar varaq yangi va bo'sh bo'lsa, sarlavha qatorini yaratamiz
     if (sheet.getLastRow() === 0) {
-      const headers = [
-        "Vaqt", 
+      const isQuizPart = (sheetName === "3-Qism" || sheetName === "4-Qism" || sheetName === "5-Qism");
+      
+      const headers = isQuizPart ? [
+        "Vaqt",
         "Qism",
-        "O'quvchi Ismi", 
-        "Guruhi / Telefon", 
-        "Topshiriq / Savol №", 
-        "Topshiriq / Test Nomi", 
-        "Yuklangan Fayl", 
-        "Yechim / Natija"
+        "O'quvchi Ismi",
+        "Guruhi / Telefon",
+        "Test Holati",
+        "Test Sarlavhasi",
+        "Natija Fayli",
+        "Batafsil Natija"
+      ] : [
+        "Vaqt",
+        "Qism",
+        "O'quvchi Ismi",
+        "Guruhi / Telefon",
+        "Topshiriq №",
+        "Topshiriq Nomi",
+        "Fayl Nomi",
+        "Yechim Kodi"
       ];
+      
       sheet.appendRow(headers);
       
-      // Sarlavha dizayni: 1-qism ko'k, 2-qism binafsharang, 3-qism sariq, 4-qism yashil, 5-qism pushti
+      // Sarlavha qatori dizayni
       const headerRange = sheet.getRange(1, 1, 1, headers.length);
       headerRange.setFontWeight("bold");
-      let headerBg = "#3b82f6";
-      if (sheetName === "2-Qism") headerBg = "#8b5cf6";
-      else if (sheetName === "3-Qism") headerBg = "#f59e0b";
-      else if (sheetName === "4-Qism") headerBg = "#10b981";
-      else if (sheetName === "5-Qism") headerBg = "#ec4899";
-      headerRange.setBackground(headerBg);
       headerRange.setFontColor("#ffffff");
+      headerRange.setFontSize(11);
+      
+      // Har bir qism uchun o'ziga xos rang
+      let headerBg = "#2563eb"; // 1-Qism: Moviy
+      if (sheetName === "2-Qism") headerBg = "#7c3aed"; // 2-Qism: Binafsha
+      else if (sheetName === "3-Qism") headerBg = "#d97706"; // 3-Qism: To'q sariq
+      else if (sheetName === "4-Qism") headerBg = "#059669"; // 4-Qism: Yashil
+      else if (sheetName === "5-Qism") headerBg = "#db2777"; // 5-Qism: Pushti
+      
+      headerRange.setBackground(headerBg);
       sheet.setFrozenRows(1);
+      
+      // Ustunlar kengligini qulay qilib sozlash
+      sheet.setColumnWidth(1, 160); // Vaqt
+      sheet.setColumnWidth(2, 90);  // Qism
+      sheet.setColumnWidth(3, 180); // O'quvchi Ismi
+      sheet.setColumnWidth(4, 160); // Guruh / Telefon
+      sheet.setColumnWidth(5, 120); // Topshiriq / Test №
+      sheet.setColumnWidth(6, 260); // Nomi
+      sheet.setColumnWidth(7, 140); // Fayl
+      sheet.setColumnWidth(8, 400); // Kod / Natija
     }
     
-    // Yangi qator qo'shish
+    // Ma'lumotlarni yangi qator sifatida yozish
     sheet.appendRow([
       formattedDate,
-      partName,
+      sheetName,
       studentName,
       studentGroup,
       taskId,
@@ -85,9 +115,9 @@ function doPost(e) {
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: `${sheetName} ga muvaffaqiyatli saqlandi!`,
-      sheetName: sheetName,
-      receivedAt: formattedDate
+      message: `Ma'lumot ${sheetName} varag'iga muvaffaqiyatli yozildi!`,
+      sheet: sheetName,
+      time: formattedDate
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch (error) {
@@ -101,6 +131,6 @@ function doPost(e) {
 function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     status: "ok",
-    message: "Google Apps Script Webhook (1-Qism & 2-Qism) faol holatda!"
+    message: "Google Apps Script Webhook (1..5 Qismlar) to'liq faol holatda ishlamoqda!"
   })).setMimeType(ContentService.MimeType.JSON);
 }
