@@ -586,14 +586,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let quizTitlePart = "3-Qism: 12 ta Oson Test";
     if (state.currentPart === 4) quizTitlePart = "4-Qism: 12 ta Amaliy Test";
     if (state.currentPart === 5) quizTitlePart = "5-Qism: 12 ta O'zgaruvchilar Testi";
+
+    const wrongCount = total - correct;
     const payload = {
       studentName: state.studentName,
       studentGroup: state.studentGroup,
       taskId: `${state.currentPart}-Qism Test`,
       taskTitle: `${quizTitlePart} (${correct}/${total} — ${percent}%)`,
       part: `${state.currentPart}-Qism`,
+      correctCount: correct,
+      wrongCount: wrongCount,
+      percent: `${percent}%`,
+      scoreText: `${correct} / ${total}`,
       fileName: `quiz_part${state.currentPart}_natija.txt`,
-      code: `Talaba: ${state.studentName}\nGuruh: ${state.studentGroup}\nQism: ${state.currentPart}-Qism (${quizTitlePart})\nNatija: ${correct}/${total} ta to'g'ri (${percent}%)\nSana: ${new Date().toLocaleString()}`
+      code: `Talaba: ${state.studentName}\nGuruh: ${state.studentGroup}\nQism: ${state.currentPart}-Qism (${quizTitlePart})\nTo'g'ri javoblar: ${correct} ta\nXato javoblar: ${wrongCount} ta\nUmumiy natija: ${percent}%\nBall: ${correct} / ${total}\nSana: ${new Date().toLocaleString()}`
     };
 
     try {

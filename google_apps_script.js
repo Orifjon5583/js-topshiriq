@@ -49,17 +49,19 @@ function doPost(e) {
     }
     
     // Agar varaq yangi va bo'sh bo'lsa, sarlavha qatorini yaratamiz
+    const isQuizPart = (sheetName === "3-Qism" || sheetName === "4-Qism" || sheetName === "5-Qism");
+    
     if (sheet.getLastRow() === 0) {
-      const isQuizPart = (sheetName === "3-Qism" || sheetName === "4-Qism" || sheetName === "5-Qism");
-      
       const headers = isQuizPart ? [
         "Vaqt",
         "Qism",
         "O'quvchi Ismi",
         "Guruhi / Telefon",
-        "Test Holati",
-        "Test Sarlavhasi",
-        "Natija Fayli",
+        "To'g'ri (Soni)",
+        "Xato (Soni)",
+        "Foiz (%)",
+        "Umumiy Ball",
+        "Test Nomi",
         "Batafsil Natija"
       ] : [
         "Vaqt",
@@ -91,27 +93,55 @@ function doPost(e) {
       sheet.setFrozenRows(1);
       
       // Ustunlar kengligini qulay qilib sozlash
-      sheet.setColumnWidth(1, 160); // Vaqt
-      sheet.setColumnWidth(2, 90);  // Qism
-      sheet.setColumnWidth(3, 180); // O'quvchi Ismi
-      sheet.setColumnWidth(4, 160); // Guruh / Telefon
-      sheet.setColumnWidth(5, 120); // Topshiriq / Test №
-      sheet.setColumnWidth(6, 260); // Nomi
-      sheet.setColumnWidth(7, 140); // Fayl
-      sheet.setColumnWidth(8, 400); // Kod / Natija
+      if (isQuizPart) {
+        sheet.setColumnWidth(1, 160); // Vaqt
+        sheet.setColumnWidth(2, 90);  // Qism
+        sheet.setColumnWidth(3, 180); // O'quvchi Ismi
+        sheet.setColumnWidth(4, 160); // Guruhi / Telefon
+        sheet.setColumnWidth(5, 120); // To'g'ri (Soni)
+        sheet.setColumnWidth(6, 120); // Xato (Soni)
+        sheet.setColumnWidth(7, 100); // Foiz (%)
+        sheet.setColumnWidth(8, 120); // Umumiy Ball
+        sheet.setColumnWidth(9, 260); // Test Nomi
+        sheet.setColumnWidth(10, 400); // Batafsil Natija
+      } else {
+        sheet.setColumnWidth(1, 160); // Vaqt
+        sheet.setColumnWidth(2, 90);  // Qism
+        sheet.setColumnWidth(3, 180); // O'quvchi Ismi
+        sheet.setColumnWidth(4, 160); // Guruhi / Telefon
+        sheet.setColumnWidth(5, 120); // Topshiriq №
+        sheet.setColumnWidth(6, 260); // Nomi
+        sheet.setColumnWidth(7, 140); // Fayl
+        sheet.setColumnWidth(8, 400); // Kod / Natija
+      }
     }
     
     // Ma'lumotlarni yangi qator sifatida yozish
-    sheet.appendRow([
-      formattedDate,
-      sheetName,
-      studentName,
-      studentGroup,
-      taskId,
-      taskTitle,
-      fileName,
-      code
-    ]);
+    if (isQuizPart) {
+      sheet.appendRow([
+        formattedDate,
+        sheetName,
+        studentName,
+        studentGroup,
+        data.correctCount !== undefined ? data.correctCount : "",
+        data.wrongCount !== undefined ? data.wrongCount : "",
+        data.percent || "",
+        data.scoreText || "",
+        taskTitle,
+        code
+      ]);
+    } else {
+      sheet.appendRow([
+        formattedDate,
+        sheetName,
+        studentName,
+        studentGroup,
+        taskId,
+        taskTitle,
+        fileName,
+        code
+      ]);
+    }
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
