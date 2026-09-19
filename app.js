@@ -241,10 +241,63 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ================= 3-QISM, 4-QISM VA 5-QISM: QUIZ (TEST) MANTIQI =================
+  // Massivni tasodifiy aralashtirish (Fisher-Yates Shuffle)
+  function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Savollar va ularning javob variantlarini tasodifiy (random) aralashtirib olish
+  function getPreparedQuizData(partNum, forceNew = false) {
+    const storageKey = `js_shuffled_quiz_part_${partNum}`;
+    if (!forceNew) {
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Asosiy savollar bazasini olish
+    let baseData = QUIZ_DATA;
+    if (partNum === 4) baseData = QUIZ_DATA_PART4;
+    if (partNum === 5) baseData = QUIZ_DATA_PART5;
+
+    // 1. Savollar ketma-ketligini random aralashtirish
+    const shuffledQuestions = shuffleArray(baseData).map((q) => {
+      // 2. Har bir savolning 4 ta javob variantini ham random aralashtirish
+      const originalOptions = q.options.map((optText, optIdx) => ({
+        text: optText,
+        isCorrect: (optIdx === q.answer)
+      }));
+
+      const shuffledOptions = shuffleArray(originalOptions);
+      const newAnswerIndex = shuffledOptions.findIndex(o => o.isCorrect);
+
+      return {
+        id: q.id,
+        question: q.question,
+        codeSnippet: q.codeSnippet,
+        options: shuffledOptions.map(o => o.text),
+        answer: newAnswerIndex,
+        explanation: q.explanation
+      };
+    });
+
+    localStorage.setItem(storageKey, JSON.stringify(shuffledQuestions));
+    return shuffledQuestions;
+  }
+
   function getCurrentQuizData() {
-    if (state.currentPart === 5) return QUIZ_DATA_PART5;
-    if (state.currentPart === 4) return QUIZ_DATA_PART4;
-    return QUIZ_DATA;
+    return getPreparedQuizData(state.currentPart);
   }
 
   function getCurrentQuizAnswers() {
@@ -356,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateQuizLiveScore();
 
     if (quizPartBadge) quizPartBadge.textContent = `${state.currentPart}-Qism`;
-    if (quizBadge) quizBadge.textContent = `${question.id}-savol`;
+    if (quizBadge) quizBadge.textContent = `${index + 1}-savol`;
     if (quizQuestionTitle) quizQuestionTitle.textContent = question.question;
 
     if (question.codeSnippet) {
@@ -579,11 +632,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnRestartQuiz) {
     btnRestartQuiz.addEventListener("click", () => {
-      if (confirm(`${state.currentPart}-Qism testini boshidan qaytadan topshirmoqchimisiz?`)) {
+      if (confirm(`${state.currentPart}-Qism testini boshidan qaytadan topshirmoqchimisiz? (Savollar va javoblar qaytadan tasodifiy aralashtiriladi)`)) {
         setCurrentQuizAnswers({});
         setCurrentQuizIndex(0);
+        // Yangi random savollar va javob variantlarini generatsiya qilish
+        getPreparedQuizData(state.currentPart, true);
         loadQuizQuestion(0);
-        showToast(`${state.currentPart}-Qism testi qaytadan boshlandi!`);
+        showToast(`${state.currentPart}-Qism savollari va javoblari qayta aralashtirildi!`);
       }
     });
   }
