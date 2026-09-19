@@ -1124,11 +1124,15 @@ body.dark .badge-part {
   to { transform: rotate(360deg); }
 }
 
-/* ================= 3-QISM: OSON TEST (QUIZ) USLUBLARI ================= */
+/* ================= 3, 4, 5-QISM: TEST (QUIZ) USLUBLARI ================= */
 .quiz-workspace {
   max-width: 840px;
   margin: 0 auto;
   animation: fadeIn 0.35s ease;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; /* Test vaqtida matnni belgilash va nusxalashni taqiqlash */
 }
 
 .quiz-card {

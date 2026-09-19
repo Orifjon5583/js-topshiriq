@@ -968,4 +968,86 @@ document.addEventListener("DOMContentLoaded", () => {
       settingsModal.classList.remove("open");
     }
   });
+
+  // ================= ANTI-CHEAT (NUSXALASH VA KO'CHIRISHDAN HIMOYA) =================
+  function isQuizActive() {
+    return state.currentPart === 3 || state.currentPart === 4 || state.currentPart === 5;
+  }
+
+  // 1. Sichqonchaning o'ng tugmasini (Context menu) bloklash
+  document.addEventListener("contextmenu", (e) => {
+    if (isQuizActive() || e.target.closest("#quizWorkspace")) {
+      e.preventDefault();
+      showToast("⚠️ Test vaqtida o'ng tugma orqali nusxalash taqiqlangan!", "error");
+    }
+  });
+
+  // 2. Matnni nusxalash (Copy, Cut) amallarini bloklash
+  document.addEventListener("copy", (e) => {
+    if (isQuizActive() || e.target.closest("#quizWorkspace")) {
+      e.preventDefault();
+      showToast("⚠️ Test savollarini nusxalash (Copy) taqiqlangan!", "error");
+    }
+  });
+
+  document.addEventListener("cut", (e) => {
+    if (isQuizActive() || e.target.closest("#quizWorkspace")) {
+      e.preventDefault();
+      showToast("⚠️ Test vaqtida matnni kesib olish (Cut) taqiqlangan!", "error");
+    }
+  });
+
+  // 3. Matnni belgilashni (selectstart) test hududida bloklash
+  document.addEventListener("selectstart", (e) => {
+    if (e.target.closest("#quizWorkspace")) {
+      e.preventDefault();
+    }
+  });
+
+  // 4. Klaviaturadagi nusxalash va inspeksiya tugmalarini bloklash (Ctrl+C, Ctrl+A, Ctrl+U, Ctrl+P, F12)
+  document.addEventListener("keydown", (e) => {
+    if (!isQuizActive()) return;
+
+    const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+    const key = e.key ? e.key.toLowerCase() : "";
+
+    // Ctrl+C (Nusxalash)
+    if (isCtrlOrCmd && key === "c") {
+      if (!e.target.closest("#codeEditor")) {
+        e.preventDefault();
+        showToast("⚠️ Test vaqtida Ctrl+C orqali nusxalash taqiqlangan!", "error");
+      }
+    }
+
+    // Ctrl+A (Barchasini belgilash)
+    if (isCtrlOrCmd && key === "a") {
+      if (!e.target.closest("#codeEditor") && !e.target.closest("input")) {
+        e.preventDefault();
+        showToast("⚠️ Test vaqtida matnni belgilash taqiqlangan!", "error");
+      }
+    }
+
+    // Ctrl+U (Sahifa manba kodini ko'rish)
+    if (isCtrlOrCmd && key === "u") {
+      e.preventDefault();
+      showToast("⚠️ Sahifa manba kodini ko'rish taqiqlangan!", "error");
+    }
+
+    // Ctrl+P (Chop etish / PDF saqlash)
+    if (isCtrlOrCmd && key === "p") {
+      e.preventDefault();
+      showToast("⚠️ Testni chop etish taqiqlangan!", "error");
+    }
+
+    // Ctrl+S (Sahifani saqlash)
+    if (isCtrlOrCmd && key === "s") {
+      e.preventDefault();
+    }
+
+    // F12 yoki Ctrl+Shift+I / Ctrl+Shift+J (Dasturchi asboblari)
+    if (e.key === "F12" || (isCtrlOrCmd && e.shiftKey && (key === "i" || key === "j" || key === "c"))) {
+      e.preventDefault();
+      showToast("⚠️ Test vaqtida tekshirish vositalari (DevTools) cheklangan!", "error");
+    }
+  });
 });
