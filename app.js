@@ -11,8 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     solutions: JSON.parse(localStorage.getItem("js_solutions") || "{}"),
     quizAnswers: JSON.parse(localStorage.getItem("js_quiz_answers") || "{}"),
     quizAnswersPart4: JSON.parse(localStorage.getItem("js_quiz_answers_part4") || "{}"),
+    quizAnswersPart5: JSON.parse(localStorage.getItem("js_quiz_answers_part5") || "{}"),
     currentQuizIndex: 0,
-    currentQuizIndexPart4: 0
+    currentQuizIndexPart4: 0,
+    currentQuizIndexPart5: 0
   };
 
   // DOM Elementlar
@@ -46,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const partTab2 = document.getElementById("partTab2");
   const partTab3 = document.getElementById("partTab3");
   const partTab4 = document.getElementById("partTab4");
+  const partTab5 = document.getElementById("partTab5");
   const stepperTitleText = document.getElementById("stepperTitleText");
 
   // Workspaces
@@ -198,6 +201,11 @@ document.addEventListener("DOMContentLoaded", () => {
       switchToPart(4);
     });
   }
+  if (partTab5) {
+    partTab5.addEventListener("click", () => {
+      switchToPart(5);
+    });
+  }
 
   function switchToPart(partNum) {
     state.currentPart = partNum;
@@ -205,13 +213,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (partTab2) partTab2.classList.toggle("active", partNum === 2);
     if (partTab3) partTab3.classList.toggle("active", partNum === 3);
     if (partTab4) partTab4.classList.toggle("active", partNum === 4);
+    if (partTab5) partTab5.classList.toggle("active", partNum === 5);
 
-    if (partNum === 3 || partNum === 4) {
+    if (partNum === 3 || partNum === 4 || partNum === 5) {
       if (codeWorkspace) codeWorkspace.style.display = "none";
       if (quizWorkspace) quizWorkspace.style.display = "block";
       initQuizStepper();
       loadQuizQuestion(getCurrentQuizIndex());
-      showToast(`${partNum}-Qism: 12 ta ${partNum === 4 ? "Amaliy" : "Oson"} test savollari ochildi!`);
+      let partDesc = "Oson";
+      if (partNum === 4) partDesc = "Amaliy";
+      if (partNum === 5) partDesc = "O'zgaruvchilar va Ma'lumot turlari";
+      showToast(`${partNum}-Qism: 12 ta ${partDesc} test savollari ochildi!`);
       return;
     }
 
@@ -228,17 +240,24 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`${partNum}-Qism topshiriqlari ochildi!`);
   }
 
-  // ================= 3-QISM VA 4-QISM: QUIZ (TEST) MANTIQI =================
+  // ================= 3-QISM, 4-QISM VA 5-QISM: QUIZ (TEST) MANTIQI =================
   function getCurrentQuizData() {
-    return state.currentPart === 4 ? QUIZ_DATA_PART4 : QUIZ_DATA;
+    if (state.currentPart === 5) return QUIZ_DATA_PART5;
+    if (state.currentPart === 4) return QUIZ_DATA_PART4;
+    return QUIZ_DATA;
   }
 
   function getCurrentQuizAnswers() {
-    return state.currentPart === 4 ? state.quizAnswersPart4 : state.quizAnswers;
+    if (state.currentPart === 5) return state.quizAnswersPart5;
+    if (state.currentPart === 4) return state.quizAnswersPart4;
+    return state.quizAnswers;
   }
 
   function setCurrentQuizAnswers(answers) {
-    if (state.currentPart === 4) {
+    if (state.currentPart === 5) {
+      state.quizAnswersPart5 = answers;
+      localStorage.setItem("js_quiz_answers_part5", JSON.stringify(answers));
+    } else if (state.currentPart === 4) {
       state.quizAnswersPart4 = answers;
       localStorage.setItem("js_quiz_answers_part4", JSON.stringify(answers));
     } else {
@@ -248,11 +267,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getCurrentQuizIndex() {
-    return state.currentPart === 4 ? (state.currentQuizIndexPart4 || 0) : (state.currentQuizIndex || 0);
+    if (state.currentPart === 5) return state.currentQuizIndexPart5 || 0;
+    if (state.currentPart === 4) return state.currentQuizIndexPart4 || 0;
+    return state.currentQuizIndex || 0;
   }
 
   function setCurrentQuizIndex(idx) {
-    if (state.currentPart === 4) {
+    if (state.currentPart === 5) {
+      state.currentQuizIndexPart5 = idx;
+    } else if (state.currentPart === 4) {
       state.currentQuizIndexPart4 = idx;
     } else {
       state.currentQuizIndex = idx;
@@ -279,7 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const curIdx = getCurrentQuizIndex();
     const answers = getCurrentQuizAnswers();
 
-    const quizTypeTitle = state.currentPart === 4 ? "4-Qism amaliy test savollari" : "3-Qism test savollari";
+    let quizTypeTitle = "3-Qism test savollari";
+    if (state.currentPart === 4) quizTypeTitle = "4-Qism amaliy test savollari";
+    if (state.currentPart === 5) quizTypeTitle = "5-Qism o'zgaruvchilar va turlar testi";
+
     stepperTitleText.textContent = `${quizTypeTitle} ketma-ketligi`;
     stepCounterText.textContent = `Savol ${curIdx + 1} / ${quizData.length}`;
     const progressPercent = ((curIdx + 1) / quizData.length) * 100;
@@ -455,7 +481,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resultWrongCount) resultWrongCount.textContent = wrongCount;
     if (resultPercent) resultPercent.textContent = `${percent}%`;
 
-    const quizLabel = state.currentPart === 4 ? "Amaliy Test" : "Oson Test";
+    let quizLabel = "Oson Test";
+    if (state.currentPart === 4) quizLabel = "Amaliy Test";
+    if (state.currentPart === 5) quizLabel = "O'zgaruvchilar va Turlar Testi";
 
     if (resultBadgeIcon && resultTitle && resultSubtitle) {
       if (percent >= 85) {
@@ -502,7 +530,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Google Sheets ga test natijasini yuborish
   async function sendQuizResultsToSheets(correct, total, percent) {
     if (!state.webhookUrl) return;
-    const quizTitlePart = state.currentPart === 4 ? "4-Qism: 12 ta Amaliy Test" : "3-Qism: 12 ta Oson Test";
+    let quizTitlePart = "3-Qism: 12 ta Oson Test";
+    if (state.currentPart === 4) quizTitlePart = "4-Qism: 12 ta Amaliy Test";
+    if (state.currentPart === 5) quizTitlePart = "5-Qism: 12 ta O'zgaruvchilar Testi";
     const payload = {
       studentName: state.studentName,
       studentGroup: state.studentGroup,

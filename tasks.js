@@ -589,3 +589,164 @@ const QUIZ_DATA_PART4 = [
   }
 ];
 
+// ================= 5-QISM (O'zgaruvchilar, let/const, Ma'lumot Turlari & typeof) =================
+const QUIZ_DATA_PART5 = [
+  {
+    id: 1,
+    question: "Dasturlashda o'zgaruvchi (variable) nima vazifani bajaradi?",
+    codeSnippet: "let yosh = 18;\nconsole.log(yosh);",
+    options: [
+      "Ma'lumotlarni xotirada saqlash va ulardan qayta foydalanish uchun",
+      "Faqat HTML sahifani bezash uchun",
+      "Faqat kompyuterni o'chirish uchun",
+      "Internet tezligini oshirish uchun"
+    ],
+    answer: 0,
+    explanation: "O'zgaruvchi kompyuter xotirasidagi ma'lumot saqlanadigan qutichaga o'xshaydi. Unga qiymat yuklab, dastur davomida qayta ishlatishimiz mumkin."
+  },
+  {
+    id: 2,
+    question: "JavaScript'da o'zgaruvchi nomi qaysi belgi bilan boshlanishi MUMKIN EMAS?",
+    codeSnippet: null,
+    options: [
+      "Lotin harfi bilan (masalan: ism)",
+      "Raqam bilan (masalan: 1foydalanuvchi)",
+      "Pastki chiziq bilan (masalan: _yosh)",
+      "Dollar belgisi bilan (masalan: $narx)"
+    ],
+    answer: 1,
+    explanation: "O'zgaruvchi nomi hech qachon raqam bilan boshlanishi mumkin emas (masalan '1ism' xato, lekin 'ism1' to'g'ri)."
+  },
+  {
+    id: 3,
+    question: "Quyidagi kodda '=' belgisi qanday ma'noni bildiradi?",
+    codeSnippet: "let shahar = \"Toshkent\";",
+    options: [
+      "Tenglikni tekshiradi",
+      "O'ng tarafdagi qiymatni chap tarafdagi o'zgaruvchiga o'zlashtiradi (biriktiradi)",
+      "Ikkala qiymatni bir-biriga qo'shadi",
+      "Xatolik keltirib chiqaradi"
+    ],
+    answer: 1,
+    explanation: "Bitta tenglik belgisi (=) o'zlashtirish operatori (assignment operator) hisoblanib, o'ng tarafdagi ma'lumotni o'zgaruvchiga biriktiradi."
+  },
+  {
+    id: 4,
+    question: "'let' va 'const' kalit so'zlari orasidagi asosiy farq nima?",
+    codeSnippet: null,
+    options: [
+      "'let' o'zgaruvchan qiymatlar uchun, 'const' esa o'zgarmas (konstanta) qiymatlar uchun",
+      "'const' faqat raqamlar uchun, 'let' faqat matnlar uchun ishlatiladi",
+      "Ular orasida hech qanday farq yo'q",
+      "'let' eski JavaScript, 'const' esa yangi JavaScript"
+    ],
+    answer: 0,
+    explanation: "'let' bilan e'lon qilingan o'zgaruvchi qiymatini keyinchalik o'zgartirish mumkin, 'const' (constant) esa o'zgarmas bo'lib, qiymatini qayta o'zgartirib bo'lmaydi."
+  },
+  {
+    id: 5,
+    question: "Quyidagi kod bajarilganda konsolda qanday xatolik yuzaga keladi?",
+    codeSnippet: "const PI = 3.14;\nPI = 3.15;",
+    options: [
+      "TypeError: Assignment to constant variable",
+      "SyntaxError: Invalid name",
+      "ReferenceError: PI is not defined",
+      "Hech qanday xatolik bo'lmaydi"
+    ],
+    answer: 0,
+    explanation: "const bilan e'lon qilingan o'zgaruvchiga qayta qiymat berish taqiqlangan, shuning uchun 'TypeError: Assignment to constant variable' xatosi chiqadi."
+  },
+  {
+    id: 6,
+    question: "Quyidagi kod yozilganda nima sodir bo'ladi?",
+    codeSnippet: "const parol;",
+    options: [
+      "SyntaxError: Missing initializer in const declaration",
+      "O'zgaruvchi qiymati avtomatik 'undefined' bo'ladi",
+      "O'zgaruvchi qiymati avtomatik 0 bo'ladi",
+      "Kod xatosiz ishlaydi"
+    ],
+    answer: 0,
+    explanation: "const o'zgaruvchisi e'lon qilingan vaqtdayoq unga darhol qiymat berilishi shart (masalan: const parol = '1234';). Aks holda 'SyntaxError' yuzaga keladi."
+  },
+  {
+    id: 7,
+    question: "JavaScript'da matn (string) ma'lumot turini hosil qilish uchun qaysi belgilardan foydalanish mumkin?",
+    codeSnippet: "const a = 'Salom';\nconst b = \"Dunyo\";\nconst c = `JavaScript`;",
+    options: [
+      "Yakka qo'shtirnoq (' '), juft qo'shtirnoq (\" \") va bektik (` `)",
+      "Faqat juft qo'shtirnoq (\" \")",
+      "Faqat qavslar ( )",
+      "Faqat figurali qavslar { }"
+    ],
+    answer: 0,
+    explanation: "JavaScript'da String (matn) turlari bittalik (' '), ikkitalik (\" \") yoki bektik (` `) belgilariga o'ralgan holda yozilishi mumkin."
+  },
+  {
+    id: 8,
+    question: "Boolean (mantiqiy) ma'lumot turi qanday qiymatlarni qabul qiladi?",
+    codeSnippet: "let darsBoshlandimi = true;\nlet yomgirYogyaptimi = false;",
+    options: [
+      "Faqat true (rost) yoki false (yolg'on)",
+      "0 dan 100 gacha bo'lgan raqamlarni",
+      "Har qanday so'zlarni",
+      "Faqat bo'sh qiymatlarni"
+    ],
+    answer: 0,
+    explanation: "Boolean turi faqat ikkita qiymatdan birini qabul qiladi: true (rost / ha) yoki false (yolg'on / yo'q)."
+  },
+  {
+    id: 9,
+    question: "'null' qiymati JavaScript'da nimani anglatadi?",
+    codeSnippet: "let foydalanuvchi = null;",
+    options: [
+      "Qasddan bo'sh qilib belgilangan yoki mavjud bo'lmagan qiymatni",
+      "Cheksiz katta sonni",
+      "Dastur qotib qolganini",
+      "0 raqamini"
+    ],
+    answer: 0,
+    explanation: "'null' — dasturchi tomonidan qasddan beriladigan 'bo'sh / hech narsa yo'q' degan qiymatdir. 'undefined' esa hali qiymat berilmaganlikni bildiradi."
+  },
+  {
+    id: 10,
+    question: "Quyidagi kod konsolga nima chiqaradi?",
+    codeSnippet: "console.log(typeof \"JavaScript\");\nconsole.log(typeof 2026);",
+    options: [
+      "\"string\" va \"number\"",
+      "\"text\" va \"digit\"",
+      "\"word\" va \"int\"",
+      "\"undefined\" va \"null\""
+    ],
+    answer: 0,
+    explanation: "typeof operatori qiymatning turini aniqlaydi: matn uchun 'string', har qanday son uchun 'number' qaytaradi."
+  },
+  {
+    id: 11,
+    question: "Quyidagi mashhur JavaScript holatida konsolga nima chiqadi?",
+    codeSnippet: "console.log(typeof null);",
+    options: [
+      "\"object\"",
+      "\"null\"",
+      "\"undefined\"",
+      "\"number\""
+    ],
+    answer: 0,
+    explanation: "JavaScript yaratilgan davrdan qolgan mashhur xususiyatga ko'ra, typeof null har doim 'object' deb qaytaradi."
+  },
+  {
+    id: 12,
+    question: "E'lon qilinmagan (mavjud bo'lmagan) o'zgaruvchini ishlatishga uringanda qanday xato chiqadi?",
+    codeSnippet: "console.log(nomalumOzgaruvchi);",
+    options: [
+      "ReferenceError: nomalumOzgaruvchi is not defined",
+      "TypeError: Invalid type",
+      "SyntaxError: Unexpected token",
+      "Hech qanday xato chiqmaydi"
+    ],
+    answer: 0,
+    explanation: "E'lon qilinmagan o'zgaruvchiga murojaat qilinganda brauzer 'ReferenceError' (manzil / havola xatosi) beradi."
+  }
+];
+
+

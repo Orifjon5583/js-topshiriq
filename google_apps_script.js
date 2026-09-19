@@ -58,13 +58,14 @@ function doPost(e) {
       ];
       sheet.appendRow(headers);
       
-      // Sarlavha dizayni: 1-qism ko'k, 2-qism binafsharang, 3-qism sariq, 4-qism yashil
+      // Sarlavha dizayni: 1-qism ko'k, 2-qism binafsharang, 3-qism sariq, 4-qism yashil, 5-qism pushti
       const headerRange = sheet.getRange(1, 1, 1, headers.length);
       headerRange.setFontWeight("bold");
       let headerBg = "#3b82f6";
       if (sheetName === "2-Qism") headerBg = "#8b5cf6";
       else if (sheetName === "3-Qism") headerBg = "#f59e0b";
       else if (sheetName === "4-Qism") headerBg = "#10b981";
+      else if (sheetName === "5-Qism") headerBg = "#ec4899";
       headerRange.setBackground(headerBg);
       headerRange.setFontColor("#ffffff");
       sheet.setFrozenRows(1);
